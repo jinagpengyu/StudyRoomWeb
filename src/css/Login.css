@@ -1,0 +1,37 @@
+#root {
+    /*max-width: 1440px;*/
+    margin: 0 auto;
+    padding: 2rem;
+    /*text-align: center;*/
+}
+.login-form {
+    border: 1px solid black;
+
+}
+
+.heading_style{
+    width: 100%;
+    border: 1px solid #2b58ad;
+}
+
+.box-container {
+    position: relative;
+    top:399px;
+    height: 100px;
+    width: 100%;
+    border: 1px solid #2b58ad;
+}
+
+.col-border{
+    border: 1px solid #2b58ad;
+}
+
+.login-size{
+    height: 100px;
+}
+
+.login-position{
+    position: absolute;
+    top:100px;
+
+}

@@ -1,0 +1,16 @@
+/* 自定义样式 */
+.col {
+    border: 1px solid #ccc; /* 添加线框效果 */
+}
+
+.col:hover {
+    border-color: #007bff; /* 鼠标悬停时改变边框颜色 */
+}
+
+.btn-success {
+    border: 1px solid #28a745; /* 添加线框效果 */
+}
+
+.btn-success:hover {
+    border-color: #218838; /* 鼠标悬停时改变边框颜色 */
+}
