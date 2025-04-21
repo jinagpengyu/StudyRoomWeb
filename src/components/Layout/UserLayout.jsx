@@ -9,11 +9,13 @@ import {
 import { Button, Layout, Menu, theme } from 'antd';
 import OrderSeatPage from "../page/OrderSeatsView/OrderSeatPage.jsx";
 import OrderHistoryPage from "../page/OrderHistory/OrderHistoryPage.jsx";
+import Convention from "../page/NoticeAndConvention/Convention.jsx";
 const { Header, Sider, Content } = Layout;
 
 const Pages = {
     "OrderSeatPage" : <OrderSeatPage/>,
     "OrderSeatHistory" : <OrderHistoryPage/>,
+    "ConventionPage":<Convention/>
 }
 const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
@@ -28,15 +30,15 @@ const UserLayout = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1']}
+                    defaultSelectedKeys={['1-1']}
                     items={[
                         {
                             key: '1',
                             icon: <UserOutlined />,
-                            label: '座位预约',
+                            label: '座位预约中心',
                             children: [
                                 {
-                                    key: '2',
+                                    key: '1-1',
                                     icon: <UserOutlined />,
                                     label: '座位预约',
                                     onClick: () => {
@@ -44,7 +46,7 @@ const UserLayout = () => {
                                     }
                                 },
                                 {
-                                    key: '3',
+                                    key: '1-2',
                                     icon: <UserOutlined />,
                                     label: '个人预约记录',
                                     onClick: () => {
@@ -55,17 +57,24 @@ const UserLayout = () => {
 
                         },
                         {
-                            key: '4',
+                            key: '2',
                             icon: <VideoCameraOutlined />,
-                            label: '历史记录',
-                            onClick: () => {
-                                setCurrentPage("");
-                            }
-                        },
-                        {
-                            key: '5',
-                            icon: <UploadOutlined />,
-                            label: '个人中心',
+                            label: '信息中心',
+                            children: [
+                                {
+                                    key: '2-1',
+                                    icon: <UserOutlined />,
+                                    label: '自习室公约',
+                                    onClick: () => {
+                                        setCurrentPage("ConventionPage");
+                                    }
+                                },
+                                {
+                                    key: '2-2',
+                                    icon: <UserOutlined />,
+                                    label: '自习室通知',
+                                }
+                            ]
                         },
                     ]}
                 />

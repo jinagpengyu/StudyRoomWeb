@@ -68,7 +68,14 @@ export default function OrderHistoryPage() {
         GetTableData(setDataSource)
     }, []);
     return (
-        <Table dataSource={dataSource} columns={columns} rowKey={'id'} />
+        <Table dataSource={dataSource}
+               columns={columns}
+               rowKey={'id'}
+               style={{
+                   width:'90%',
+                   margin:'100px,100px'
+               }}
+        />
     )
 }
 

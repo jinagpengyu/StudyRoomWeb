@@ -1,45 +1,58 @@
 import {Flex} from "@radix-ui/themes";
 import {useEffect, useState} from "react";
+import {Divider, List,Typography} from "antd";
 
 const api_url = import.meta.env.VITE_API_URL;
-const GetConventions = async (setConventions) => {
-    try {
-        const response = await fetch(`${api_url}/user/getAllConvention`,{
-            method:"POST",
-            credentials:"include"
-        })
-        const result = await response.json()
-        if(result.status === 200) setConventions(result.data)
-        else throw new Error("无数据")
-    }catch (e){
-        console.error(e)
-    }
-}
+
+const data = [
+    'Racing car sprays burning fuel into crowd.',
+    'Japanese princess to wed commoner.',
+    'Australian walks 100km after outback crash.',
+    'Man charged over missing wedding girl.',
+    'Los Angeles battles huge wildfires.',
+];
 export default function Convention(){
     const [Conventions, setConventions] = useState([])
+
+    const GetConventions = async (setConventions) => {
+        try {
+            const response = await fetch(`${api_url}/user/getAllConvention`,{
+                method:"POST",
+                credentials:"include"
+            })
+            const result = await response.json()
+            if(result.status === 200) setConventions(result.data)
+            else throw new Error("无数据")
+        }catch (e){
+            console.error(e)
+        }
+    }
     useEffect(() => {
         GetConventions(setConventions)
     }, []);
     return (
-        <Flex gap={'3'} m={'4'}>
-            <table className="table table-bordered border-primary">
-                <thead>
-                <tr>
-                    <th scope="col">序号</th>
-                    <th scope="col">内容</th>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    Conventions.map((convention, index) => (
-                        <tr key={index}>
-                            <th scope={'row'}>{index + 1}</th>
-                            <th>{convention.context}</th>
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </table>
-        </Flex>
+        <>
+            <List
+                header={<div
+                    style={{
+                        textAlign: 'center',
+                        fontSize: 40,
+                    }}
+                >自习室公约</div>}
+                footer={<div>希望大家自觉遵守，共同维护自习室的环境和氛围，谢谢</div>}
+                bordered
+                dataSource={Conventions}
+                renderItem={(item,index) => (
+                    <List.Item>
+                        <Typography.Text mark>[{index+1}]</Typography.Text> {item.context}
+                    </List.Item>
+                )}
+                style={{
+                    width:'75%',
+                    margin:'20px auto 0',
+                    background:"white"
+                }}
+            />
+        </>
     )
 }
