@@ -10,12 +10,14 @@ import { Button, Layout, Menu, theme } from 'antd';
 import OrderSeatPage from "../page/OrderSeatsView/OrderSeatPage.jsx";
 import OrderHistoryPage from "../page/OrderHistory/OrderHistoryPage.jsx";
 import Convention from "../page/NoticeAndConvention/Convention.jsx";
+import NoticePage from "../page/NoticeAndConvention/NoticePage.jsx";
 const { Header, Sider, Content } = Layout;
 
 const Pages = {
     "OrderSeatPage" : <OrderSeatPage/>,
     "OrderSeatHistory" : <OrderHistoryPage/>,
-    "ConventionPage":<Convention/>
+    "ConventionPage":<Convention/>,
+    "NoticePage":<NoticePage/>
 }
 const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
@@ -73,6 +75,9 @@ const UserLayout = () => {
                                     key: '2-2',
                                     icon: <UserOutlined />,
                                     label: '自习室通知',
+                                    onClick: () => {
+                                        setCurrentPage("NoticePage");
+                                    }
                                 }
                             ]
                         },

@@ -1,16 +1,9 @@
-import {Flex} from "@radix-ui/themes";
 import {useEffect, useState} from "react";
-import {Divider, List,Typography} from "antd";
+import { List,Typography} from "antd";
 
 const api_url = import.meta.env.VITE_API_URL;
 
-const data = [
-    'Racing car sprays burning fuel into crowd.',
-    'Japanese princess to wed commoner.',
-    'Australian walks 100km after outback crash.',
-    'Man charged over missing wedding girl.',
-    'Los Angeles battles huge wildfires.',
-];
+
 export default function Convention(){
     const [Conventions, setConventions] = useState([])
 

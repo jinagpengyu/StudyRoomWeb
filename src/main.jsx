@@ -8,7 +8,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from "./components/ui/register.jsx";
 import UserIndex from "./components/page/UserInfo/UserIndex.jsx";
 import PleaseLogin from "./components/page/ErrorPage/PleaseLogin.jsx";
-import CustomerRulersPage from "./components/page/NoticeAndConvention/CustomerRulersPage.jsx";
+import CustomerRulersPage from "./components/page/NoticeAndConvention/NoticePage.jsx";
 import AdminIndex from "./components/page/admin/AdminIndex.jsx";
 import AdminMessageManage from "./components/page/admin/Message/AdminMessageManage.jsx";
 import AdminSeatsManage from "./components/page/admin/SeatManage/AdminSeatsManage.jsx";
