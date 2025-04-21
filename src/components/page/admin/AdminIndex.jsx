@@ -1,5 +1,6 @@
 import AdminHeader from "../../Layout/AdminHeader.jsx";
 import {useEffect, useState} from "react";
+import {Button} from "@radix-ui/themes";
 
 const api_url = import.meta.env.VITE_API_URL;
 export default function AdminIndex() {
@@ -50,27 +51,38 @@ export default function AdminIndex() {
             GetUserArr();
         },[])
         return (
-            <div className={"vstack gap-3 m-3"}>
+            <table className="table table-bordered border-primary m-3">
+                <thead>
+                <tr>
+                    <th scope={"col"}>序号</th>
+                    <th scope={"col"}>用户名</th>
+                    <th scope={"col"}>手机号</th>
+                    <th scope={"col"}>邮箱</th>
+                    <th scope={"col"}>操作</th>
+                </tr>
+                </thead>
+                <tbody>
                 {
-                    UserArr.map((item,index) => {
-                        return (
-                            <div className={"card"} key={index}>
-                                <div className={"card-body"}>
-                                    <h5 className={"card-title"}>{"用户名 :" + item.username}</h5>
-                                    <p className={"card-text"}>{"邮箱 :" + item.email}</p>
-                                    <p className={"card-text"}>{"身份 : " + item.role}</p>
-                                </div>
-                            </div>
-                        )
-                    })
+                    UserArr.map((user, index) =>  (
+                        <tr key={index}>
+                            <th scope={"row"}>{index + 1}</th>
+                            <th>{user.name}</th>
+                            <th>{user.phone}</th>
+                            <th>{user.email}</th>
+                            <th>
+                                <Button>hello</Button>
+                            </th>
+                        </tr>
+                    ))
                 }
-            </div>
+                </tbody>
+            </table>
         )
     }
     // 用户操作记录组件
     const UserOperationRecord = () => {
-        const [SearchEmail,setSearchEmail] = useState("");
-        const [OperationRecordArr,setOperationRecordArr] = useState([]);
+        const [SearchEmail, setSearchEmail] = useState("");
+        const [OperationRecordArr, setOperationRecordArr] = useState([]);
         const handleEmailChange = (e) => {
             setSearchEmail(e.target.value);
         }
@@ -83,7 +95,7 @@ export default function AdminIndex() {
                 body: JSON.stringify({
                     email: SearchEmail
                 }),
-                credentials:"include"
+                credentials: "include"
             }).then(response => response.json()).catch(error => console.log(error));
             if (response.status === 200) {
                 setOperationRecordArr(response.data);
@@ -182,21 +194,23 @@ export default function AdminIndex() {
 
     return (
         <>
-            <div className="container">
-                <div className="row mb-4">
-                    <AdminHeader/>
-                </div>
-                <div className={"row mb-4"}>
-                    <div className={"d-flex gap-3"}>
-                        <div className={"w-25"}>
-                            <OperationNav/>
-                        </div>
-                        <div className={"w-75"}>
-                            {SelectPage[currentPage]}
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {/*<div className="container-fluid bg-warning-subtle"*/}
+            {/*     style={{height: "100vh"}}*/}
+            {/*>*/}
+            {/*    <div className="row mb-4">*/}
+            {/*        <AdminHeader/>*/}
+            {/*    </div>*/}
+            {/*    <div className={"row mb-4"}>*/}
+            {/*        <div className={"d-flex gap-3"}>*/}
+            {/*            <div className={"w-25"}>*/}
+            {/*                <OperationNav/>*/}
+            {/*            </div>*/}
+            {/*            <div className={""}>*/}
+            {/*                {SelectPage[currentPage]}*/}
+            {/*            </div>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
         </>
     )
 }

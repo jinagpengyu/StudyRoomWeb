@@ -1,9 +1,11 @@
-import Header from "../../Layout/Header.jsx";
+import Header from "../../Layout/UserLayout.jsx";
 import {useEffect, useState} from "react";
+import {DataList, Badge,Text , Box} from "@radix-ui/themes";
+import {CopyIcon} from "@radix-ui/react-icons";
 
 const api_url = import.meta.env.VITE_API_URL;
 export default function UserIndex() {
-    const [currentPage, setCurrentPage] = useState("ChangeUsername");
+    const [currentPage, setCurrentPage] = useState("CheckUserInfo");
     const [userInfo, setUserInfo] = useState({});
     /*获取用户的完整信息*/
     const getUserInfo = async () => {
@@ -14,7 +16,10 @@ export default function UserIndex() {
             },
             credentials:"include",
         }).then(response => response.json()).catch(err => console.log(err));
-        setUserInfo({email:response.email,username:response.username});
+
+        if(response.status === 200){
+            setUserInfo(response.data);
+        }
         console.log(response);
     }
     useEffect(() => {
@@ -27,9 +32,17 @@ export default function UserIndex() {
         return (
             <div className={"d-flex w-100 m-3"}>
                 <div className={"vstack gap-3"}>
-                    <button className={`btn ${currentPage === "ChangeUsername"? "btn-primary" : "btn-outline-primary"}`}
-                            onClick={handleClick}
-                            id={"ChangeUsername"}
+                    <button
+                        className={`btn ${currentPage === "CheckUserInfo" ? "btn-primary" : "btn-outline-primary"}`}
+                        onClick={handleClick}
+                        id={"CheckUserInfo"}
+                    >
+                        查看个人信息
+                    </button>
+                    <button
+                        className={`btn ${currentPage === "ChangeUsername" ? "btn-primary" : "btn-outline-primary"}`}
+                        onClick={handleClick}
+                        id={"ChangeUsername"}
                     >
                         修改用户名
                     </button>
@@ -50,7 +63,6 @@ export default function UserIndex() {
         const handleUsernameChange = (e) => {
             setChangeUsernameText(e.target.value);
         }
-
         const ChangeUsername = async () =>{
             // TODO:优化修改用户名功能
             const response = await fetch(`${api_url}/api/user/change/username`,{
@@ -95,13 +107,49 @@ export default function UserIndex() {
             </div>
         )
     }
+    const CheckUserInfo = () => {
+        return (
+            <Box className={"m-3"}>
+                <DataList.Root size={"3"}>
+                    <DataList.Item align="center">
+                        <DataList.Label minWidth="88px" >用户名</DataList.Label>
+                        <DataList.Value>
+                            <Text>{userInfo.name}</Text>
+                        </DataList.Value>
+                    </DataList.Item>
+                    <DataList.Item align="center">
+                        <DataList.Label minWidth="88px" >邮箱</DataList.Label>
+                        <DataList.Value>
+                            <Text>{userInfo.email}</Text>
+                        </DataList.Value>
+                    </DataList.Item>
+                    <DataList.Item align="center">
+                        <DataList.Label minWidth="88px" >手机号</DataList.Label>
+                        <DataList.Value>
+                            <Text>{userInfo.phone}</Text>
+                        </DataList.Value>
+                    </DataList.Item>
+                    <DataList.Item align="center">
+                        <DataList.Label minWidth="88px" >用户角色</DataList.Label>
+                        <DataList.Value>
+                            <Text>{userInfo.role}</Text>
+                        </DataList.Value>
+                    </DataList.Item>
+
+                </DataList.Root>
+            </Box>
+        )
+    }
 
     const AllPage = {
-        "ChangeUsername": <ChangeUsername/>
+        "ChangeUsername": <ChangeUsername/>,
+        "CheckUserInfo": <CheckUserInfo/>
     }
     return (
         <>
-            <div className="container">
+            <div className="container-fluid bg-warning-subtle"
+                 style={{height: "100vh"}}
+            >
                 <div className="row mb-4">
                     <Header/>
                 </div>

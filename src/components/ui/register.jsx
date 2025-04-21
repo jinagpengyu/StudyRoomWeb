@@ -1,6 +1,5 @@
 import {useEffect, useRef, useState} from "react";
 import { useNavigate } from "react-router";
-import dayjs from "dayjs";
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Post_register(email,password,date,userName,navigate){
@@ -122,7 +121,7 @@ export default function Register() {
                     <p className={"mt-4 text-center fw-bolder fs-2"}>注册账户</p>
                     <div className={"mb-4"}>
                         <label className={"form-label"} htmlFor="UserName">
-                            UserName
+                            User Name
                         </label>
                         <input className={"form-control"} id={"UserName"} placeholder={"tom"}
                                value={userName}
@@ -151,13 +150,20 @@ export default function Register() {
                     {passwordError && <div className="alert alert-danger">{passwordErrorMessage}</div>}
                     <div className={"mb-4"}>
                         <label className={"form-label"} htmlFor="password-a">
-                            Password again
+                            Password Again
                         </label>
 
                         <input className={"form-control"} id={"password-a"} placeholder={"重复密码"}
                                value={passwordAgain} onChange={passwordAgainChange}/>
                     </div>
+                    <div className={"mb-4"}>
+                        <label className={"form-label"} htmlFor="password-a">
+                            Phone Number
+                        </label>
 
+                        <input className={"form-control"} id={"password-a"} placeholder={"手机号"}
+                               value={passwordAgain} onChange={passwordAgainChange}/>
+                    </div>
 
                     {passwordAgainError && <div className="alert alert-danger">{passwordAgainErrorMessage}</div>}
 

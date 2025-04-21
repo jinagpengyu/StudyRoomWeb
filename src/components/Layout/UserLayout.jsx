@@ -8,12 +8,14 @@ import {
 } from '@ant-design/icons';
 import { Button, Layout, Menu, theme } from 'antd';
 import OrderSeatPage from "../page/OrderSeatsView/OrderSeatPage.jsx";
+import OrderHistoryPage from "../page/OrderHistory/OrderHistoryPage.jsx";
 const { Header, Sider, Content } = Layout;
 
 const Pages = {
-    "OrderSeatPage" : <OrderSeatPage/>
+    "OrderSeatPage" : <OrderSeatPage/>,
+    "OrderSeatHistory" : <OrderHistoryPage/>,
 }
-const AdminHeader = () => {
+const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
     const [collapsed, setCollapsed] = useState(false);
     const {
@@ -26,19 +28,34 @@ const AdminHeader = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['2']}
+                    defaultSelectedKeys={['1']}
                     items={[
                         {
                             key: '1',
                             icon: <UserOutlined />,
                             label: '座位预约',
-                            onClick: () => {
-                                setCurrentPage("OrderSeatPage");
-                            }
+                            children: [
+                                {
+                                    key: '2',
+                                    icon: <UserOutlined />,
+                                    label: '座位预约',
+                                    onClick: () => {
+                                        setCurrentPage("OrderSeatPage");
+                                    }
+                                },
+                                {
+                                    key: '3',
+                                    icon: <UserOutlined />,
+                                    label: '个人预约记录',
+                                    onClick: () => {
+                                        setCurrentPage("OrderSeatHistory");
+                                    }
+                                }
+                            ]
 
                         },
                         {
-                            key: '2',
+                            key: '4',
                             icon: <VideoCameraOutlined />,
                             label: '历史记录',
                             onClick: () => {
@@ -46,7 +63,7 @@ const AdminHeader = () => {
                             }
                         },
                         {
-                            key: '3',
+                            key: '5',
                             icon: <UploadOutlined />,
                             label: '个人中心',
                         },
@@ -74,4 +91,4 @@ const AdminHeader = () => {
         </Layout>
     );
 };
-export default AdminHeader;
+export default UserLayout;

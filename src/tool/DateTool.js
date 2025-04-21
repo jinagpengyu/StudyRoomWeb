@@ -44,3 +44,17 @@ export function CompareDate(CompareDate1,CompareDate2) {
         return 0;
     }
 }
+
+export function GetSelectDateOptions(){
+    const date = TodayAndTomorrowYYDDMM();
+    return [
+        {
+            label:date.today_YYMMDD,
+            value:date.today_YYMMDD
+        },
+        {
+            label:date.tomorrow_YYMMDD,
+            value:date.tomorrow_YYMMDD
+        }
+    ]
+}

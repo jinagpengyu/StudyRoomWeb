@@ -11,7 +11,7 @@ const ViolationRecordPage = () => {
     return (
 
         <>
-            <div className="container">
+            <div className="container-fluid">
                 <div className={"row mb-4"}>
                     <AdminHeader />
                 </div>

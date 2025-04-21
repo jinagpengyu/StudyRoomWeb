@@ -25,7 +25,7 @@ function Login_container(){
             return response.json();
         }).then(response => {
             if(response.status === 200){
-                navigate("/index");
+                navigate("/user/index");
             }
             if(response.status === 201){
                 navigate("/admin/index");
