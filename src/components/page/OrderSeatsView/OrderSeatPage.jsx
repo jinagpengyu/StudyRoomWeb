@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Radio, Flex, Card, Button, message} from 'antd';
+import {Radio, Flex, Button, message} from 'antd';
 import {GetSelectDateOptions } from '../../../tool/DateTool.js'
 const api_url = import.meta.env.VITE_API_URL;
 
@@ -55,6 +55,7 @@ export default function OrderSeatPage() {
             const result = await response.json();
             if(result.status === 200){
                 orderSuccess()
+                await getSeatStatus(selectDate,setSeats);
             }else{
                 orderFail(result.message)
             }
@@ -66,7 +67,7 @@ export default function OrderSeatPage() {
 
     useEffect(() => {
         getSeatStatus(selectDate,setSeats);
-    },[])
+    },[selectDate])
     return (
         <>
             {contextHolder}
@@ -77,7 +78,6 @@ export default function OrderSeatPage() {
                     value={selectDate}
                     onChange={(e) => {
                         setSelectDate(e.target.value);
-                        getSeatStatus(selectDate,setSeats);
                     }}
                     optionType="button"
                     buttonStyle="solid"
