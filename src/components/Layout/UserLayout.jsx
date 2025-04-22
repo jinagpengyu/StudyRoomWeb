@@ -11,13 +11,15 @@ import OrderSeatPage from "../page/OrderSeatsView/OrderSeatPage.jsx";
 import OrderHistoryPage from "../page/OrderHistory/OrderHistoryPage.jsx";
 import Convention from "../page/NoticeAndConvention/Convention.jsx";
 import NoticePage from "../page/NoticeAndConvention/NoticePage.jsx";
+import NewReportPage from "../page/Report/NewReportPage.jsx";
 const { Header, Sider, Content } = Layout;
 
 const Pages = {
     "OrderSeatPage" : <OrderSeatPage/>,
     "OrderSeatHistory" : <OrderHistoryPage/>,
     "ConventionPage":<Convention/>,
-    "NoticePage":<NoticePage/>
+    "NoticePage":<NoticePage/>,
+    "NewReportPage":<NewReportPage/>
 }
 const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
@@ -81,6 +83,21 @@ const UserLayout = () => {
                                 }
                             ]
                         },
+                        {
+                            key: '3',
+                            icon: <UploadOutlined />,
+                            label: '投诉中心',
+                            children:[
+                                {
+                                    key: '3-1',
+                                    icon: <UserOutlined />,
+                                    label: '意见反馈',
+                                    onClick: () => {
+                                        setCurrentPage("NewReportPage");
+                                    }
+                                }
+                            ]
+                        }
                     ]}
                 />
             </Sider>
