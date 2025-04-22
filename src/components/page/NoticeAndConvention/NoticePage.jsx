@@ -30,7 +30,7 @@ export default function NoticePage(){
                         textAlign: 'center',
                         fontSize: 40,
                     }}
-                >自习室公约</div>}
+                >自习室通知</div>}
                 // footer={<div>希望大家自觉遵守，共同维护自习室的环境和氛围，谢谢</div>}
                 bordered
                 dataSource={messages}

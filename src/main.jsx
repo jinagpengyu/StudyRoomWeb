@@ -6,7 +6,7 @@ import "@radix-ui/themes/styles.css";
 import { Theme } from '@radix-ui/themes'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from "./components/ui/register.jsx";
-import UserIndex from "./components/page/UserInfo/UserIndex.jsx";
+import UserIndex from "./components/page/UserInfo/UserInfoPage.jsx";
 import PleaseLogin from "./components/page/ErrorPage/PleaseLogin.jsx";
 import CustomerRulersPage from "./components/page/NoticeAndConvention/NoticePage.jsx";
 import AdminIndex from "./components/page/admin/AdminIndex.jsx";
