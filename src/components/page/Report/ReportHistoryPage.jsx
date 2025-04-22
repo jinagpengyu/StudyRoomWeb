@@ -34,7 +34,7 @@ export default function ReportHistoryPage() {
             title: '提交时间',
             dataIndex: 'report_date',
             render: (date) => dayjs(date).format('YYYY-MM-DD HH:mm'),
-            sorter: (a, b) => dayjs(a.createdAt) - dayjs(b.createdAt)
+            sorter: (a, b) => dayjs(a.report_date - dayjs(b.report_date))
         },
         {
             title: '状态',

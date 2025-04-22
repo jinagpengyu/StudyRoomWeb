@@ -1,4 +1,4 @@
-import {Table, Button, Modal} from 'antd'
+import {Table, Button, Modal, Tag} from 'antd'
 import {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 const api_url = import.meta.env.VITE_API_URL;
@@ -45,18 +45,51 @@ export default function OrderHistoryPage() {
             title: '预约情况',
             dataIndex: 'status',
             key: 'status',
+            sorter: (a, b) => {
+                // 正常状态优先级最高
+                if (a.status === '正常' && b.status !== '正常') return -1;
+                if (b.status === '正常' && a.status !== '正常') return 1;
+
+                // 其他状态按字母顺序排序
+                return a.status.localeCompare(b.status);
+            },
+            defaultSortOrder: 'ascend',
+            render: (status) => (
+                <Tag
+                    color={
+                        status === '正常' ? 'green' :
+                            status === '过期' ? 'orange' :
+                                status === '取消' ? 'red' : 'default'
+                    }
+                    style={{
+                        borderRadius: 4,
+                        fontWeight: 500,
+                        padding: '2px 8px'
+                    }}
+                >
+                    {status}
+                </Tag>
+            )
         },
         {
             title: '操作',
             dataIndex: "operation",
             key: 'operation',
+            width: 200 ,
             render: (_, record) => (
                 <>
                     {
                         Array.isArray(record.operation) &&
                         record.operation.map((operation, index) => {
                             if(operation === '详情') return <DetailDialog key={index} record={record} operation={operation}/>
-                            if(operation === '取消预约') return <CancelOrderDialog key={index} record={record} operation={operation}/>
+                            if(operation === '取消预约') return <CancelOrderDialog
+                                key={index}
+                                record={record}
+                                operation={operation}
+                                onSuccess={() => {
+                                    GetTableData(setDataSource)
+                                }}
+                            />
                          })
                     }
                 </>
@@ -73,7 +106,7 @@ export default function OrderHistoryPage() {
                rowKey={'id'}
                style={{
                    width:'90%',
-                   margin:'100px,100px'
+                   margin:'40px auto'
                }}
         />
     )
@@ -114,7 +147,7 @@ DetailDialog.propTypes = {
     operation: PropTypes.string.isRequired
 };
 
-const CancelOrderDialog = ({record,operation}) => {
+const CancelOrderDialog = ({record,operation,onSuccess}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const showModal = () => {
         setIsModalOpen(true);
@@ -135,6 +168,7 @@ const CancelOrderDialog = ({record,operation}) => {
             })
             if(result.status === 200){
                 console.log("取消预约成功")
+                onSuccess()
             }else{
                 throw new Error("取消预约失败")
             }
@@ -165,5 +199,6 @@ CancelOrderDialog.propTypes = {
         status: PropTypes.string,
         // 根据实际数据结构补充其他字段
     }).isRequired,
-    operation: PropTypes.string.isRequired
+    operation: PropTypes.string.isRequired,
+    onSuccess: PropTypes.func.isRequired
 };
