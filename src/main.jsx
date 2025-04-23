@@ -18,6 +18,7 @@ import LoginIndex from "./components/page/Login/LoginIndex.jsx";
 import AdminHeader from "./components/Layout/AdminHeader.jsx";
 import UserLayout from "./components/Layout/UserLayout.jsx";
 import LoginPage from './components/page/LoginAndRegister/LoginPage.jsx'
+import RegisterPage from './components/page/LoginAndRegister/RegisterPage.jsx'
 
 
 
@@ -31,6 +32,7 @@ createRoot(document.getElementById('root')).render(
                         {/*<Route index element={<App />} />*/}
                         {/*<Route index element={<Login />} />*/}
                         <Route index element={<LoginPage/>}/>
+                        <Route path={"/register"} element={<RegisterPage />} />
                             {/*<Route index element={<LoginIndex />}/>*/}
                         <Route path={"/admin/index"} element={<AdminHeader />} />
                         <Route path={"/user/index"} element={<UserLayout />}/>
