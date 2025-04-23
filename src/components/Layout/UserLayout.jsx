@@ -25,6 +25,7 @@ const Pages = {
     "ReportHistoryPage":<ReportHistoryPage/>,
     "UserInfoPage":<UserInfoPage/>
 }
+
 const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
     const [collapsed, setCollapsed] = useState(false);
