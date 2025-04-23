@@ -23,7 +23,8 @@ export default function LoginPage() {
                 const result = await response.json()
                 console.log(result)
                 localStorage.setItem('token', result?.token)
-                navigate(result?.nav)
+                localStorage.setItem('role',result?.user.role)
+                navigate('/user/index')
             }
         }catch (e) {
             console.error('登录失败:', e)
