@@ -16,7 +16,7 @@ import NewReportPage from '../page/Report/NewReportPage.jsx'
 import ReportHistoryPage from '../page/Report/ReportHistoryPage.jsx'
 import UserInfoPage from '../page/UserInfo/UserInfoPage.jsx'
 
-const { Header, Sider, Content } = Layout;
+const { Header, Sider } = Layout;
 
 const Pages = {
     "OrderSeatPage" : <OrderSeatPage/>,
@@ -32,7 +32,7 @@ const UserLayout = () => {
     const [currentPage, setCurrentPage] = useState("OrderSeatPage");
     const [collapsed, setCollapsed] = useState(false);
     const {
-        token: { colorBgContainer, borderRadiusLG },
+        token: { colorBgContainer },
     } = theme.useToken();
     const handleLogout = async () => {
         try {
