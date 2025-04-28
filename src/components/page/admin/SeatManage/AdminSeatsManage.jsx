@@ -11,6 +11,7 @@ import {
     Modal,
 } from 'antd'
 import { GetSelectDateOptions } from '../../../../tool/DateTool.js'
+import PropTypes from 'prop-types'
 
 const { Title } = Typography
 const api_url = import.meta.env.VITE_API_URL
@@ -26,9 +27,6 @@ export default function AdminSeatsManage () {
     // 消息提示方法保持不变
     const notify = {
         suspend: () => messageApi.info('该座位暂停预约，请选择其他座位'),
-        ordered: () => messageApi.info('该座位已被人预约，请选择其他座位'),
-        success: () => messageApi.info('预约成功'),
-        fail: (msg) => messageApi.info(msg),
     }
 
     // 获取座位状态（保持核心逻辑不变）
@@ -41,33 +39,14 @@ export default function AdminSeatsManage () {
                 body: JSON.stringify({ date }),
             })
             setSeats((await response.json()).data)
-        } catch (e) {
-            console.error(e)
-        }
-    }
 
-    // 预约座位逻辑（保持核心逻辑不变）
-    const handleOrder = async (seat) => {
-        try {
-            const response = await fetch(`${api_url}/api/seat/OrderOne`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({
-                    seat_id: seat.seat_id, order_date: selectDate,
-                }),
-            })
-
-            const result = await response.json()
-            result.status === 200 ? (notify.success(), getSeatStatus(
-                selectDate)) : notify.fail(result.message)
         } catch (e) {
             console.error(e)
         }
     }
 
     useEffect(() => {
-        getSeatStatus(selectDate)
+        getSeatStatus(selectDate).then(() => console.log('获取数据'))
     }, [selectDate])
 
     // 图标组件化
@@ -83,6 +62,9 @@ export default function AdminSeatsManage () {
                 d="M6.493 12.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.3 1.3 0 0 0-.37.265.3.3 0 0 0-.052.075l-.001.004-.004.01V14l.002.008.016.033a.6.6 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.6.6 0 0 0 .146-.15l.015-.033L12 14v-.004a.3.3 0 0 0-.057-.09 1.3 1.3 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465s-2.462-.172-3.34-.465c-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411"/>
         </svg>
     )
+    StatusIcon.propTypes = {
+        status: PropTypes.string.isRequired,
+    }
     /**
      * @description 获取预约该座位的用户信息
      * @param { int } seat_id
@@ -104,7 +86,7 @@ export default function AdminSeatsManage () {
                 setOrderUserinfo(result.data)
                 setModalOpen(true)
             } else {
-                throw new Error(result.message)
+                new Error(result.message)
             }
         }catch (e) {
             console.error('error:',e)
@@ -130,28 +112,30 @@ export default function AdminSeatsManage () {
                 />
 
                 <Row gutter={[16, 16]} style={{ padding: 16 }}>
-                    {seats.map((item) => (
-                        <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
-                             xl={4}>
-                            <Card
-                                bodyStyle={{ padding: 12 }}
-                                hoverable
-                            >
-                                <Flex align="center" gap={8}>
-                                    <StatusIcon status={item.status}/>
-                                    <Title level={5}
-                                           style={{ margin: 0 }}>{item.seat_id}</Title>
+                    {seats.map((item) => {
+                        return (
+                            <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
+                                 xl={4}>
+                                <Card
+                                    bodyStyle={{ padding: 12 }}
+                                    hoverable
+                                >
+                                    <Flex align="center" gap={8}>
+                                        <StatusIcon status={item.status}/>
+                                        <Title level={5}
+                                               style={{ margin: 0 }}>{item.seat_id}</Title>
 
-                                    {item.status === '可预约'
-                                        ? (<Button>可预约</Button>)
-                                        : item.status === '暂停预约'
-                                            ? (<Button type="primary"
-                                                       onClick={notify.suspend}>暂停预约</Button>)
-                                            : (<Button danger
-                                                       onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
-                                </Flex>
-                            </Card>
-                        </Col>))}
+                                        {item.status === '可预约'
+                                            ? (<Button>可预约</Button>)
+                                            : item.status === '暂停预约'
+                                                ? (<Button type="primary"
+                                                           onClick={notify.suspend}>暂停预约</Button>)
+                                                : (<Button danger
+                                                           onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
+                                    </Flex>
+                                </Card>
+                            </Col>)
+                    })}
                 </Row>
             </Flex>
             <Modal
@@ -162,8 +146,8 @@ export default function AdminSeatsManage () {
             >
                 {orderUserinfo && (
                     <div>
-                        <p>用户姓名：{orderUserinfo.name}</p>
-                        <p>联系方式：{orderUserinfo.email}</p>
+                        <p>用户名：{orderUserinfo.name}</p>
+                        <p>邮箱：{orderUserinfo.email}</p>
                     </div>
                 )}
             </Modal>
