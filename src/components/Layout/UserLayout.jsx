@@ -15,6 +15,9 @@ import NoticePage from '../page/NoticeAndConvention/NoticePage.jsx'
 import NewReportPage from '../page/Report/NewReportPage.jsx'
 import ReportHistoryPage from '../page/Report/ReportHistoryPage.jsx'
 import UserInfoPage from '../page/UserInfo/UserInfoPage.jsx'
+import AdminSeatsManage from '../page/admin/SeatManage/AdminSeatsManage.jsx'
+import AdminSeatsStatus from '../page/admin/SeatManage/AdminSeatsStatus.jsx'
+import UserManagePage from '../page/admin/UserManage/UserManagePage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -25,11 +28,14 @@ const Pages = {
     "NoticePage":<NoticePage/>,
     "NewReportPage":<NewReportPage/>,
     "ReportHistoryPage":<ReportHistoryPage/>,
-    "UserInfoPage":<UserInfoPage/>
+    "UserInfoPage":<UserInfoPage/>,
+    "AdminOrderSeatPage":<AdminSeatsManage/>,
+    "AdminSeatsStatusPage":<AdminSeatsStatus/>,
+    "UserManagePage":<UserManagePage/>
 }
 
 const UserLayout = () => {
-    const [currentPage, setCurrentPage] = useState("OrderSeatPage");
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') ? 'AdminOrderSeatPage' : 'OrderSeatPage');
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
@@ -58,6 +64,10 @@ const UserLayout = () => {
             window.location.reload();
         }
     }
+    const defaultKeys = (() => {
+        const role = localStorage.getItem('role') || 'user';
+        return role === 'admin' ? ['admin', 'admin-1'] : ['1-1'];
+    })();
     return (
         <Layout style={{height: "100vh"}}>
             <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -65,12 +75,12 @@ const UserLayout = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    defaultSelectedKeys={['1-1']}
+                    defaultSelectedKeys={defaultKeys}
                     items={(() => {
                         const role = localStorage.getItem('role') || 'user'; // 添加默认值
 
                         // 公共菜单项
-                        const baseMenu = [
+                        const baseMenu = role === "user" ? [
                             {
                                 key: '1',
                                 icon: <UserOutlined />,
@@ -88,17 +98,37 @@ const UserLayout = () => {
                                     }
                                 ]
                             }
-                        ];
+                        ] : [];
 
                         // 管理员扩展菜单
                         const adminMenu = role === 'admin' ? [
                             {
                                 key: 'admin',
                                 icon: <VideoCameraOutlined />,
-                                label: '系统管理',
+                                label: '预约管理',
                                 children: [
-                                    { key: 'admin-1', label: '用户管理' },
-                                    { key: 'admin-2', label: '数据统计' }
+                                    {
+                                        key: 'admin-1',
+                                        label: '预约总览' ,
+                                        onClick: () => setCurrentPage("AdminOrderSeatPage")
+                                    },
+                                    {
+                                        key: 'admin-2',
+                                        label: '座位状态管理',
+                                        onClick: () => setCurrentPage("AdminSeatsStatusPage")
+                                    }
+                                ]
+                            },
+                            {
+                                key: 'admin-nav-2',
+                                label: '用户管理',
+                                icon: <UserOutlined />,
+                                children: [
+                                    {
+                                        key: 'admin-nav-2-1',
+                                        label: '用户管理',
+                                        onClick: () => setCurrentPage("UserManagePage")
+                                    }
                                 ]
                             }
                         ] : [];

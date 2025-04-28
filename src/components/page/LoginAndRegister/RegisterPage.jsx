@@ -157,7 +157,7 @@ const RegisterPage = () => {
                 </Form>
 
                 <div style={{ textAlign: 'center', marginTop: 16 }}>
-                    已有账号？<a href="/login">立即登录</a>
+                    已有账号？<a href="/">立即登录</a>
                 </div>
             </Card>
         </div>)

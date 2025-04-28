@@ -1,388 +1,172 @@
-import {useEffect, useState} from 'react';
-import AdminHeader from "../../../Layout/AdminHeader.jsx";
-import 'react-datepicker/dist/react-datepicker.css';
-import '../AdminSeatsManage.css';
-import {TodayAndTomorrowYYDDMM} from "../../../../tool/DateTool.js"; // 引入自定义样式
+import { useEffect, useState } from 'react'
 import {
-    Button,
-    Dialog,
+    Radio,
     Flex,
-    Select,
-    Text
-} from "@radix-ui/themes"
-import PropTypes from "prop-types";
-const api_url = import.meta.env.VITE_API_URL;
+    Button,
+    message,
+    Card,
+    Row,
+    Col,
+    Typography,
+    Modal,
+} from 'antd'
+import { GetSelectDateOptions } from '../../../../tool/DateTool.js'
 
-/**
- * AdminSeatsManage 组件用于管理座位的预约状态和座位状态。
- * 主要功能包括：
- * 1. 查看座位的预约情况，包括已预约、空闲和暂停预约的座位。
- * 2. 编辑座位的状态，如将座位设置为“可预约”或“暂停预约”。
- * 3. 查看座位的详细信息，包括预约用户的姓名、邮箱和手机号。
- * 
- * 组件包含两个主要页面：
- * - CheckSeatOrderStatus: 查看座位的预约情况。
- * - SeatStatusControl: 编辑座位的状态。
- * 
- * 组件通过 API 与后端进行数据交互，获取和更新座位信息。
- */
-export default function AdminSeatsManage() {
-    const [currentPage, setCurrentPage] = useState("CheckSeats");
-    // 导航栏
-    const OperationNav = () => {
-        const handleClick = (e) => {
-            setCurrentPage(e.target.id);
-        }
-        return (
-            <div className={"d-flex w-100 m-3"}>
-                <div className={"vstack gap-3"}>
-                    <button className={`btn ${currentPage === "CheckSeats" ? "btn-primary" : "btn-outline-primary"}`}
-                            onClick={handleClick}
-                            id={"CheckSeats"}
-                    >
-                        座位预约情况
-                    </button>
-                    <button
-                        className={`btn ${currentPage === "SeatStatusControl" ? "btn-primary" : "btn-outline-primary"}`}
-                        onClick={handleClick}
-                        id={"SeatStatusControl"}
-                    >
-                        座位状态管控
-                    </button>
-                </div>
-            </div>
-        )
+const { Title } = Typography
+const api_url = import.meta.env.VITE_API_URL
+
+const options = GetSelectDateOptions()
+
+export default function AdminSeatsManage () {
+    const [seats, setSeats] = useState([])
+    const [selectDate, setSelectDate] = useState(options[0].value)
+    const [messageApi, contextHolder] = message.useMessage()
+    const [modalOpen, setModalOpen] = useState(false)
+    const [orderUserinfo, setOrderUserinfo] = useState({})
+    // 消息提示方法保持不变
+    const notify = {
+        suspend: () => messageApi.info('该座位暂停预约，请选择其他座位'),
+        ordered: () => messageApi.info('该座位已被人预约，请选择其他座位'),
+        success: () => messageApi.info('预约成功'),
+        fail: (msg) => messageApi.info(msg),
     }
-    const ChangeStatusDialog = ({seat_id, seat_status}) => {
-        const [seatStatus, setSeatStatus] = useState(seat_status)
-        const changeStatus = async () => {
-            const response = await fetch(`${api_url}/admin/change_seat_status`,{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    seat_id:seat_id,
-                    status:seatStatus
-                }),
-                credentials:"include"
-            }).then(response => response.json()).catch(error => console.log(error));
-            console.log(response)
-            if(response.status === 200){
-                GetSeatInfoArr()
-            }
-        }
-        return (
-            <Dialog.Root>
-                <Dialog.Trigger>
-                    <Button>编辑座位的状态</Button>
-                </Dialog.Trigger>
 
-                <Dialog.Content maxWidth="450px">
-                    <Dialog.Title>编辑座位的状态</Dialog.Title>
-                    <Dialog.Description size="2" mb="4">
-                        Make changes to your profile.
-                        <Flex gap="3" mt="4" justify="start">
-                            <Text >{seat_id}</Text>
-                            <Select.Root size="2" defaultValue={seatStatus} value={seatStatus} onValueChange={setSeatStatus}>
-                                <Select.Trigger />
-                                <Select.Content>
-                                    <Select.Item value="暂停预约">暂停预约</Select.Item>
-                                    <Select.Item value="可预约">可预约</Select.Item>
-                                </Select.Content>
-                            </Select.Root>
-                        </Flex>
-                    </Dialog.Description>
-
-
-                    <Flex gap="3" mt="4" justify="end">
-                        <Dialog.Close>
-                            <Button variant="soft" color="gray">
-                                Cancel
-                            </Button>
-                        </Dialog.Close>
-                        <Dialog.Close>
-                            <Button onClick={changeStatus}>Save</Button>
-                        </Dialog.Close>
-                    </Flex>
-                </Dialog.Content>
-            </Dialog.Root>
-        )
-    }
-    const CheckSeatOrderStatus = () => {
-        const [SeatArr, setSeatArr] = useState([]);
-        const [SearchSelectDate, setSearchSelectDate] = useState(TodayAndTomorrowYYDDMM().today_YYMMDD);
-        const [CheckBoxValue, setCheckBoxValue] = useState({
-            CheckBox1:true,
-            CheckBox2:true
-        })
-        useEffect(() => {
-            GetSeatInfoArr();
-        },[]);
-        // 新增：提取状态渲染组件
-        const SeatStatus = ({ status }) => {
-          const statusColor = {
-            "已预约": "red",
-            "暂停预约": "default",
-            "可预约": "green"
-          };
-
-          return <Text color={statusColor[status]}>{status}</Text>;
-        };
-
-        // 修改：优化状态渲染逻辑
-        const renderSeats = (SeatArr) => {
-          return (
-            <table className="table table-bordered border-primary">
-              <thead>
-                <tr>
-                  <th scope={"col"}>座位号</th>
-                  <th scope={"col"}>预约状态</th>
-                  <th scope={"col"}>操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {SeatArr.map((item, index) => (
-                  <tr key={index}>
-                    <th scope={"row"}>{item.seat_id}</th>
-                    <th>
-                      <SeatStatus status={item.status} />
-                    </th>
-                    <th>
-                      <Flex gap={"3"}>
-                        {item.status === "已预约" && (
-                          <SeatOrderStatusDetailButton order={item} />
-                        )}
-                      </Flex>
-                    </th>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          );
-        };
-
-        // 修改：优化数据获取的错误处理
-        const GetSeatInfoArr = async () => {
-          try {
+    // 获取座位状态（保持核心逻辑不变）
+    const getSeatStatus = async (date) => {
+        try {
             const response = await fetch(`${api_url}/api/seat/Status`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                date: SearchSelectDate
-              }),
-              credentials: "include"
-            });
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ date }),
+            })
+            setSeats((await response.json()).data)
+        } catch (e) {
+            console.error(e)
+        }
+    }
 
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
+    // 预约座位逻辑（保持核心逻辑不变）
+    const handleOrder = async (seat) => {
+        try {
+            const response = await fetch(`${api_url}/api/seat/OrderOne`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    seat_id: seat.seat_id, order_date: selectDate,
+                }),
+            })
 
-            const data = await response.json();
-            if (data.status === 200) {
-              setSeatArr(data.data);
+            const result = await response.json()
+            result.status === 200 ? (notify.success(), getSeatStatus(
+                selectDate)) : notify.fail(result.message)
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    useEffect(() => {
+        getSeatStatus(selectDate)
+    }, [selectDate])
+
+    // 图标组件化
+    const StatusIcon = ({ status }) => (
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+             fill="currentColor" viewBox="0 0 16 16">
+            {status === '可预约'
+                ? (<path fillRule="evenodd"
+                         d="M5.04.303A.5.5 0 0 1 5.5 0h5c.2 0 .38.12.46.303l3 7a.5.5 0 0 1-.363.687h-.002q-.225.044-.45.081a33 33 0 0 1-4.645.425V13.5a.5.5 0 1 1-1 0V8.495a33 33 0 0 1-4.645-.425q-.225-.036-.45-.08h-.003a.5.5 0 0 1-.362-.688l3-7ZM3.21 7.116A31 31 0 0 0 8 7.5a31 31 0 0 0 4.791-.384L10.171 1H5.83z"/>)
+                : (<path fillRule="evenodd"
+                         d="M5.04.303A.5.5 0 0 1 5.5 0h5c.2 0 .38.12.46.303l3 7a.5.5 0 0 1-.363.687h-.002q-.225.044-.45.081a33 33 0 0 1-4.645.425V13.5a.5.5 0 1 1-1 0V8.495a33 33 0 0 1-4.645-.425q-.225-.036-.45-.08h-.003a.5.5 0 0 1-.362-.688l3-7Z"/>)}
+            <path
+                d="M6.493 12.574a.5.5 0 0 1-.411.575c-.712.118-1.28.295-1.655.493a1.3 1.3 0 0 0-.37.265.3.3 0 0 0-.052.075l-.001.004-.004.01V14l.002.008.016.033a.6.6 0 0 0 .145.15c.165.13.435.27.813.395.751.25 1.82.414 3.024.414s2.273-.163 3.024-.414c.378-.126.648-.265.813-.395a.6.6 0 0 0 .146-.15l.015-.033L12 14v-.004a.3.3 0 0 0-.057-.09 1.3 1.3 0 0 0-.37-.264c-.376-.198-.943-.375-1.655-.493a.5.5 0 1 1 .164-.986c.77.127 1.452.328 1.957.594C12.5 13 13 13.4 13 14c0 .426-.26.752-.544.977-.29.228-.68.413-1.116.558-.878.293-2.059.465-3.34.465s-2.462-.172-3.34-.465c-.436-.145-.826-.33-1.116-.558C3.26 14.752 3 14.426 3 14c0-.599.5-1 .961-1.243.505-.266 1.187-.467 1.957-.594a.5.5 0 0 1 .575.411"/>
+        </svg>
+    )
+    /**
+     * @description 获取预约该座位的用户信息
+     * @param { int } seat_id
+     * @param { string } order_date
+     */
+    const GetOrderUserInfo = async (seat_id, order_date) => {
+        try {
+            const response = await fetch(`${api_url}/admin/getOrderUserInfo`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    seat_id, order_date,
+                }),
+            })
+            const result = await response.json()
+            if (result.status === 200) {
+                console.log(result.data)
+                setOrderUserinfo(result.data)
+                setModalOpen(true)
             } else {
-              console.error("Failed to fetch seat info:", data.message);
+                throw new Error(result.message)
             }
-          } catch (error) {
-            console.error("Error fetching seat info:", error);
-            // 可以在这里添加用户友好的错误提示
-          }
-        };
-
-        // 获取日期选择框的值
-        const handleSelectChange = (e) => {
-            setSearchSelectDate(e.target.value);
-            console.log(SearchSelectDate);
+        }catch (e) {
+            console.error('error:',e)
         }
-        // 获取复选框的值
-        const handleCheckBoxChange = (e) => {
-            setCheckBoxValue({
-                ...CheckBoxValue,
-                [e.target.id]:e.target.checked
-            });
-        }
-        // 已预约座位的详情页面
-        const SeatOrderStatusDetailButton = ({order}) => {
-            const [OrderInfo, setOrderInfo] = useState({});
-            const getOrderInfo = async () => {
-                try {
-                    const response = await fetch(`${api_url}/api/getOrderInfo`,{
-                        method:"POST",
-                        headers:{
-                            "Content-Type":"application/json"
-                        },
-                        body:JSON.stringify({
-                            seat_id:order.seat_id,
-                            order_date:SearchSelectDate
-                        }),
-                        credentials:"include"
-                    });
-                    const data = await response.json();
-                    if(data.status === 200) {
-                        setOrderInfo(data.data);
-                    } else {
-                        console.error("Failed to fetch order info:", data.message);
-                    }
-                } catch (error) {
-                    console.error("Error fetching order info:", error);
-                }
-            }
-            return (
-                <Dialog.Root>
-                    <Dialog.Trigger>
-                        <Button onClick={getOrderInfo}>详细</Button>
-                    </Dialog.Trigger>
-
-                    <Dialog.Content maxWidth="450px">
-                        <Dialog.Title>该座位的预约详细信息</Dialog.Title>
-                        <Dialog.Description size="2" mb="4">
-                            <Flex gap="3" mt="4" justify="start" direction={"column"}>
-                                <Text >{"座位号 : " + order.seat_id}</Text>
-                                <Text >{"用户名 : " + OrderInfo.user_info?.name || '无用户名信息'}</Text>
-                                <Text >{"邮箱 : " + OrderInfo?.user_info?.email || '无邮箱信息'}</Text>
-                                <Text >{"手机号 : " + OrderInfo?.user_info?.phone || '无手机号信息'}</Text>
-                            </Flex>
-                        </Dialog.Description>
-
-                        <Flex gap="3" mt="4" justify="end">
-                            <Dialog.Close>
-                                <Button variant="soft" color="gray">
-                                    Cancel
-                                </Button>
-                            </Dialog.Close>
-                            <Dialog.Close>
-                                <Button >Save</Button>
-                            </Dialog.Close>
-                        </Flex>
-                    </Dialog.Content>
-                </Dialog.Root>
-            )
-        }
-        SeatOrderStatusDetailButton.propTypes = {
-            order: PropTypes.object.isRequired
-        }
-
-        return (
-            <div className={"vstack gap-3 m-3"}>
-                <div className={"d-flex gap-3"}>
-                    <select className={"form-select w-25"}
-                            value={SearchSelectDate}
-                            onChange={handleSelectChange}
-                    >
-                        <option
-                            value={TodayAndTomorrowYYDDMM().today_YYMMDD}>{TodayAndTomorrowYYDDMM().today_YYMMDD}</option>
-                        <option
-                            value={TodayAndTomorrowYYDDMM().tomorrow_YYMMDD}>{TodayAndTomorrowYYDDMM().tomorrow_YYMMDD}</option>
-                    </select>
-                    <button className={"btn btn-primary"}
-                            onClick={GetSeatInfoArr}
-                    >查询
-                    </button>
-                    {/*<div className={"form-check align-content-center"}>*/}
-                    {/*    <input className={"form-check-input"} type={"checkbox"}*/}
-                    {/*           id={"CheckBox1"}*/}
-                    {/*           checked={CheckBoxValue.CheckBox1}*/}
-                    {/*           onChange={handleCheckBoxChange}*/}
-                    {/*    />*/}
-                    {/*    <label className={"form-check-label"} htmlFor={"flexCheckChecked"}>*/}
-                    {/*        只显示空闲的座位*/}
-                    {/*    </label>*/}
-                    {/*</div>*/}
-                    {/*<div className={"form-check align-content-center"}>*/}
-                    {/*    <input className={"form-check-input"} type={"checkbox"}*/}
-                    {/*           id={"CheckBox2"}*/}
-                    {/*           checked={CheckBoxValue.CheckBox2}*/}
-                    {/*           onChange={handleCheckBoxChange}*/}
-                    {/*    />*/}
-                    {/*    <label className={"form-check-label"} htmlFor={"flexCheckChecked"}>*/}
-                    {/*        只显示使用中的座位*/}
-                    {/*    </label>*/}
-                    {/*</div>*/}
-                </div>
-                {
-                    renderSeats(SeatArr, CheckBoxValue)
-                }
-            </div>
-        )
-    }
-    const SeatStatusControl = () => {
-        const [seatArr, setSeatArr] = useState([])
-        const getAllSeats = async () => {
-            const response = await fetch(`${api_url}/admin/getAllSeats`,{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                credentials:"include"
-            }).then(response => response.json()).catch(error => console.log(error));
-            console.log(response.data)
-            if(response.status === 200){
-                setSeatArr(response.data)
-            }
-        }
-        useEffect(() => {
-            getAllSeats()
-        },[])
-
-        return (
-            <table className="table table-bordered border-primary m-3">
-                <thead>
-                <tr>
-                    <th scope={"col"}>座位号</th>
-                    <th scope={"col"}>座位状态</th>
-                    <th scope={"col"}>操作</th>
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    seatArr.map((item, index) => (
-                        <tr key={index}>
-                            <th scope={"row"}>{item.seat_id}</th>
-                            <th >
-                                {item.seat_status === "已预约" ? (
-                                    <Text color={"red"}>{item.seat_status}</Text>
-                                ) : (
-                                    <Text color={"green"}>{item.seat_status}</Text>
-                                )
-                                }
-                            </th>
-                            <th>
-                                <ChangeStatusDialog seat_id={item.seat_id} seat_status={item.seat_status}/>
-                            </th>
-                        </tr>
-                    ))
-                }
-                </tbody>
-            </table>
-        )
     }
 
-    const SelectPage = {
-        "CheckSeats": <CheckSeatOrderStatus/>,
-        "SeatStatusControl": <SeatStatusControl/>
-    }
     return (
         <>
-            <div className="container-fluid">
-                <div className="row mb-4">
-                    <AdminHeader/>
-                </div>
-                <div className={"row mb-4"}>
-                <div className={"d-flex gap-3"}>
-                        <div className={"w-25"}>
-                            <OperationNav/>
-                        </div>
-                        <div className={"w-50"}>
-                            {
-                                SelectPage[currentPage]
-                            }
-                        </div>
+            {contextHolder}
+            <Flex vertical gap={16}
+                  style={{
+                      height:'100vh',
+                      overflow:'hidden'
+                  }}
+            >
+                <Radio.Group
+                    options={options}
+                    value={selectDate}
+                    onChange={(e) => setSelectDate(e.target.value)}
+                    optionType="button"
+                    buttonStyle="solid"
+                    style={{ width: '50%', margin: 16 }}
+                />
+
+                <Row gutter={[16, 16]} style={{ padding: 16 }}>
+                    {seats.map((item) => (
+                        <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
+                             xl={4}>
+                            <Card
+                                bodyStyle={{ padding: 12 }}
+                                hoverable
+                            >
+                                <Flex align="center" gap={8}>
+                                    <StatusIcon status={item.status}/>
+                                    <Title level={5}
+                                           style={{ margin: 0 }}>{item.seat_id}</Title>
+
+                                    {item.status === '可预约'
+                                        ? (<Button>可预约</Button>)
+                                        : item.status === '暂停预约'
+                                            ? (<Button type="primary"
+                                                       onClick={notify.suspend}>暂停预约</Button>)
+                                            : (<Button danger
+                                                       onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
+                                </Flex>
+                            </Card>
+                        </Col>))}
+                </Row>
+            </Flex>
+            <Modal
+                title="预约详情"
+                open={modalOpen}
+                onCancel={() => setModalOpen(false)}
+                footer={null}
+            >
+                {orderUserinfo && (
+                    <div>
+                        <p>用户姓名：{orderUserinfo.name}</p>
+                        <p>联系方式：{orderUserinfo.email}</p>
                     </div>
-                </div>
-            </div>
-        </>
+                )}
+            </Modal>
+    </>
     )
 }

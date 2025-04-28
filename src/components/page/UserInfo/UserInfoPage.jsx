@@ -91,7 +91,8 @@ export default function UserInfoPage () {
         fetchUserInfo()
     }, [])
 
-    return (<Card
+    return (
+        <Card
             title="个人信息"
             variant={'borderless'}
             style={{ margin: 16 }}
@@ -160,5 +161,6 @@ export default function UserInfoPage () {
                     </Form.Item>
                 </Form>
             </Modal>
-        </Card>)
+        </Card>
+    )
 }
