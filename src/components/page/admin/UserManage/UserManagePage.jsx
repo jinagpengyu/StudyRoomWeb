@@ -84,10 +84,19 @@ export default function UserManagePage () {
             title: '用户状态',
             dataIndex: 'isBlacklisted',
             key: 'isBlacklisted',
+            filters: [
+                {
+                    text: '正常',
+                    value: false,
+                },
+                {
+                    text: '黑名单',
+                    value: true,
+                },
+            ],
+            onFilter: (value, record) => record.isBlacklisted === value,
             render: (status) => (
-                <Tag
-                    color={status ? 'error' : 'success'}
-                >
+                <Tag color={status ? 'error' : 'success'}>
                     {status ? '黑名单' : '正常'}
                 </Tag>
             ),

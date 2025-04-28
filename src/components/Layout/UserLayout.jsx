@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import {
+    AreaChartOutlined,
     LogoutOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     UploadOutlined,
     UserOutlined,
     VideoCameraOutlined,
+
 } from '@ant-design/icons'
 import { Button, Layout, Menu, message, theme } from 'antd'
 import OrderSeatPage from '../page/OrderSeatsView/OrderSeatPage.jsx'
@@ -66,7 +68,7 @@ const UserLayout = () => {
     }
     const defaultKeys = (() => {
         const role = localStorage.getItem('role') || 'user';
-        return role === 'admin' ? ['admin', 'admin-1'] : ['1-1'];
+        return role === 'admin' ? [ 'admin-nav-1'] : ['1-1'];
     })();
     return (
         <Layout style={{height: "100vh"}}>
@@ -103,33 +105,22 @@ const UserLayout = () => {
                         // 管理员扩展菜单
                         const adminMenu = role === 'admin' ? [
                             {
-                                key: 'admin',
-                                icon: <VideoCameraOutlined />,
-                                label: '预约管理',
-                                children: [
-                                    {
-                                        key: 'admin-1',
-                                        label: '预约总览' ,
-                                        onClick: () => setCurrentPage("AdminOrderSeatPage")
-                                    },
-                                    {
-                                        key: 'admin-2',
-                                        label: '座位状态管理',
-                                        onClick: () => setCurrentPage("AdminSeatsStatusPage")
-                                    }
-                                ]
+                                key: 'admin-nav-1',
+                                icon: <AreaChartOutlined />,
+                                label: '预约总览',
+                                onClick: () => setCurrentPage("AdminOrderSeatPage")
                             },
                             {
                                 key: 'admin-nav-2',
+                                label: '座位管理',
+                                icon: <VideoCameraOutlined />,
+                                onClick: () => setCurrentPage("AdminSeatsStatusPage")
+                            },
+                            {
+                                key: 'admin-nav-3',
                                 label: '用户管理',
                                 icon: <UserOutlined />,
-                                children: [
-                                    {
-                                        key: 'admin-nav-2-1',
-                                        label: '用户管理',
-                                        onClick: () => setCurrentPage("UserManagePage")
-                                    }
-                                ]
+                                onClick: () => setCurrentPage("UserManagePage")
                             }
                         ] : [];
 
