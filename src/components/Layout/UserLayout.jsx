@@ -7,7 +7,7 @@ import {
     UploadOutlined,
     UserOutlined,
     VideoCameraOutlined,
-
+    BellOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, Menu, message, theme } from 'antd'
 import OrderSeatPage from '../page/OrderSeatsView/OrderSeatPage.jsx'
@@ -21,6 +21,7 @@ import AdminSeatsManage from '../page/admin/SeatManage/AdminSeatsManage.jsx'
 import AdminSeatsStatus from '../page/admin/SeatManage/AdminSeatsStatus.jsx'
 import UserManagePage from '../page/admin/UserManage/UserManagePage.jsx'
 import AdminOrderList from '../page/admin/SeatManage/AdminOrderList.jsx'
+import AdminNoticePage from '../page/admin/NoticeManage/AdminNoticePage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -35,7 +36,8 @@ const Pages = {
     "AdminOrderSeatPage":<AdminSeatsManage/>,
     "AdminSeatsStatusPage":<AdminSeatsStatus/>,
     "UserManagePage":<UserManagePage/>,
-    "AdminOrderList":<AdminOrderList/>
+    "AdminOrderList":<AdminOrderList/>,
+    "AdminNoticePage":<AdminNoticePage/>
 }
 
 const UserLayout = () => {
@@ -129,6 +131,12 @@ const UserLayout = () => {
                                 label: '用户管理',
                                 icon: <UserOutlined />,
                                 onClick: () => setCurrentPage("UserManagePage")
+                            },
+                            {
+                                key: 'admin-nav-5',
+                                label: '公告管理',
+                                icon: <BellOutlined />,
+                                onClick: () => setCurrentPage("AdminNoticePage")
                             }
                         ] : [];
 
