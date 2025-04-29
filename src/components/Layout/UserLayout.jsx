@@ -23,6 +23,8 @@ import UserManagePage from '../page/admin/UserManage/UserManagePage.jsx'
 import AdminOrderList from '../page/admin/SeatManage/AdminOrderList.jsx'
 import AdminNoticePage from '../page/admin/NoticeManage/AdminNoticePage.jsx'
 import AdminSystemPage from '../page/admin/SystemManage/AdminSystemPage.jsx'
+import AdminConventionPage
+    from '../page/admin/ConventionManage/AdminConventionPage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -39,7 +41,8 @@ const Pages = {
     "UserManagePage":<UserManagePage/>,
     "AdminOrderList":<AdminOrderList/>,
     "AdminNoticePage":<AdminNoticePage/>,
-    "AdminSystemPage":<AdminSystemPage/>
+    "AdminSystemPage":<AdminSystemPage/>,
+    "AdminConventionPage":<AdminConventionPage/>
 }
 
 const UserLayout = () => {
@@ -145,6 +148,12 @@ const UserLayout = () => {
                                 label: '系统设置',
                                 icon: <AreaChartOutlined />,
                                 onClick: () => setCurrentPage("AdminSystemPage")
+                            },
+                            {
+                                key: 'admin-nav-7',
+                                label: '公约管理',
+                                icon: <AreaChartOutlined />,
+                                onClick: () => setCurrentPage("AdminConventionPage")
                             }
                         ] : [];
 

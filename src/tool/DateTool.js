@@ -20,6 +20,8 @@ export function TodayAndTomorrowYYDDMM() {
     const today = new Date(now);
     const tomorrow = new Date(now.setDate(now.getUTCDate() + 1));
 
+    console.log("today:", today)
+    console.log("tomorrow:", tomorrow)
     const format = date => {
         const yyyy = String(date.getUTCFullYear()); // 修改为完整年份
         const mm = String(date.getUTCMonth() + 1).padStart(2, '0');

@@ -5,9 +5,14 @@ import { GetSelectDateOptions } from '../../../tool/DateTool.js'
 const { Title } = Typography
 const api_url = import.meta.env.VITE_API_URL
 
-const options = GetSelectDateOptions()
 
 export default function OrderSeatPage () {
+    const options = GetSelectDateOptions().reduce((acc, current) => {
+        if (!acc.find(item => item.value === current.value)) {
+            acc.push(current)
+        }
+        return acc
+    }, [])
     const [seats, setSeats] = useState([])
     const [selectDate, setSelectDate] = useState(options[0].value)
     const [messageApi, contextHolder] = message.useMessage()
