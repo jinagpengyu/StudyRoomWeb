@@ -22,6 +22,7 @@ import AdminSeatsStatus from '../page/admin/SeatManage/AdminSeatsStatus.jsx'
 import UserManagePage from '../page/admin/UserManage/UserManagePage.jsx'
 import AdminOrderList from '../page/admin/SeatManage/AdminOrderList.jsx'
 import AdminNoticePage from '../page/admin/NoticeManage/AdminNoticePage.jsx'
+import AdminSystemPage from '../page/admin/SystemManage/AdminSystemPage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -37,7 +38,8 @@ const Pages = {
     "AdminSeatsStatusPage":<AdminSeatsStatus/>,
     "UserManagePage":<UserManagePage/>,
     "AdminOrderList":<AdminOrderList/>,
-    "AdminNoticePage":<AdminNoticePage/>
+    "AdminNoticePage":<AdminNoticePage/>,
+    "AdminSystemPage":<AdminSystemPage/>
 }
 
 const UserLayout = () => {
@@ -137,6 +139,12 @@ const UserLayout = () => {
                                 label: '公告管理',
                                 icon: <BellOutlined />,
                                 onClick: () => setCurrentPage("AdminNoticePage")
+                            },
+                            {
+                                key: 'admin-nav-6',
+                                label: '系统设置',
+                                icon: <AreaChartOutlined />,
+                                onClick: () => setCurrentPage("AdminSystemPage")
                             }
                         ] : [];
 

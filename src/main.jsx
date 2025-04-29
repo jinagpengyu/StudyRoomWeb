@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import UserLayout from "./components/Layout/UserLayout.jsx";
 import LoginPage from './components/page/LoginAndRegister/LoginPage.jsx'
 import RegisterPage from './components/page/LoginAndRegister/RegisterPage.jsx'
+import ErrorPage from './components/page/admin/SystemManage/ErrorPage.jsx'
 
 
 
@@ -20,6 +21,7 @@ createRoot(document.getElementById('root')).render(
                         <Route index element={<LoginPage/>}/>
                         <Route path={"/register"} element={<RegisterPage />} />
                         <Route path={"/user/index"} element={<UserLayout />}/>
+                        <Route path={"/not/use"} element={<ErrorPage />} />
                     </Routes>
                 </BrowserRouter>
             </Theme>
