@@ -20,6 +20,7 @@ import UserInfoPage from '../page/UserInfo/UserInfoPage.jsx'
 import AdminSeatsManage from '../page/admin/SeatManage/AdminSeatsManage.jsx'
 import AdminSeatsStatus from '../page/admin/SeatManage/AdminSeatsStatus.jsx'
 import UserManagePage from '../page/admin/UserManage/UserManagePage.jsx'
+import AdminOrderList from '../page/admin/SeatManage/AdminOrderList.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -33,7 +34,8 @@ const Pages = {
     "UserInfoPage":<UserInfoPage/>,
     "AdminOrderSeatPage":<AdminSeatsManage/>,
     "AdminSeatsStatusPage":<AdminSeatsStatus/>,
-    "UserManagePage":<UserManagePage/>
+    "UserManagePage":<UserManagePage/>,
+    "AdminOrderList":<AdminOrderList/>
 }
 
 const UserLayout = () => {
@@ -112,12 +114,18 @@ const UserLayout = () => {
                             },
                             {
                                 key: 'admin-nav-2',
+                                label: '预约记录',
+                                icon: <UploadOutlined />,
+                                onClick: () => setCurrentPage("AdminOrderList")
+                            },
+                            {
+                                key: 'admin-nav-3',
                                 label: '座位管理',
                                 icon: <VideoCameraOutlined />,
                                 onClick: () => setCurrentPage("AdminSeatsStatusPage")
                             },
                             {
-                                key: 'admin-nav-3',
+                                key: 'admin-nav-4',
                                 label: '用户管理',
                                 icon: <UserOutlined />,
                                 onClick: () => setCurrentPage("UserManagePage")

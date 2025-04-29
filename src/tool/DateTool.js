@@ -16,19 +16,20 @@ export function TodayAndTomorrow() {
 }
 // YYMMDD格式
 export function TodayAndTomorrowYYDDMM() {
-    const now = new Date();
-    // 将当前时间转换为UTC+8时区
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60 * 1000);
-    const chinaTime = new Date(utc + (8 * 60 * 60 * 1000));
+    const now = new Date(Date.now() + 8 * 3600 * 1000);
+    const today = new Date(now);
+    const tomorrow = new Date(now.setDate(now.getUTCDate() + 1));
 
-    // 计算今天和明天的时间
-    const today = new Date(chinaTime.getTime());
-    const tomorrow = new Date(chinaTime.getTime() + 24 * 60 * 60 * 1000);
+    const format = date => {
+        const yyyy = String(date.getUTCFullYear()); // 修改为完整年份
+        const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const dd = String(date.getUTCDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`; // 修改分隔符
+    };
 
-    // 格式化日期为年月日对象
     return {
-        today_YYMMDD : today.toISOString().split('T')[0],
-        tomorrow_YYMMDD : tomorrow.toISOString().split('T')[0]
+        today_YYMMDD: format(today),
+        tomorrow_YYMMDD: format(tomorrow)
     }
 }
 
