@@ -10,17 +10,17 @@ import {
     Typography,
     Modal,
 } from 'antd'
-import { GetSelectDateOptions } from '../../../../tool/DateTool.js'
+import {GetSelectDate} from '../../../utils/MyDateTool.js'
 import PropTypes from 'prop-types'
 
 const { Title } = Typography
 const api_url = import.meta.env.VITE_API_URL
 
-const options = GetSelectDateOptions()
+const options = await GetSelectDate()
 
 export default function AdminSeatsManage () {
     const [seats, setSeats] = useState([])
-    const [selectDate, setSelectDate] = useState(options[0].value)
+    const [selectDate, setSelectDate] = useState(options[0])
     const [messageApi, contextHolder] = message.useMessage()
     const [modalOpen, setModalOpen] = useState(false)
     const [orderUserinfo, setOrderUserinfo] = useState({})
