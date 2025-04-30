@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Radio, Flex, Button, message, Card, Row, Col, Typography } from 'antd'
-import { GetSelectDateOptions } from '../../../tool/DateTool.js'
-import {GetSelectDate} from '../../utils/MyDateTool.js'
+import { Button, Card, Col, Flex, message, Radio, Row, Typography } from 'antd'
+import { GetSelectDate } from '../../utils/MyDateTool.js'
+
 const { Title } = Typography
 const api_url = import.meta.env.VITE_API_URL
-
+const options = await GetSelectDate()
 
 export default function OrderSeatPage () {
-    // const options = GetSelectDateOptions().reduce((acc, current) => {
-    //     if (!acc.find(item => item.value === current.value)) {
-    //         acc.push(current)
-    //     }
-    //     return acc
-    // }, [])
-    const options = GetSelectDate()
+
     const [seats, setSeats] = useState([])
-    const [selectDate, setSelectDate] = useState(options[0].value)
+    const [selectDate, setSelectDate] = useState(options[0])
     const [messageApi, contextHolder] = message.useMessage()
 
     // 消息提示方法保持不变
@@ -79,42 +73,42 @@ export default function OrderSeatPage () {
         </svg>)
 
     return (<>
-            {contextHolder}
-            <Flex vertical gap={16}>
-                <Radio.Group
-                    options={options}
-                    value={selectDate}
-                    onChange={(e) => setSelectDate(e.target.value)}
-                    optionType="button"
-                    buttonStyle="solid"
-                    style={{ width: '50%', margin: 16 }}
-                />
+        {contextHolder}
+        <Flex vertical gap={16}>
+            <Radio.Group
+                options={options}
+                value={selectDate}
+                onChange={(e) => setSelectDate(e.target.value)}
+                optionType="button"
+                buttonStyle="solid"
+                style={{ width: '50%', margin: 16 }}
+            />
 
-                <Row gutter={[16, 16]} style={{ padding: 16 }}>
-                    {seats.map((item) => (
-                        <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
-                             xl={4}>
-                            <Card
-                                bodyStyle={{ padding: 12 }}
-                                hoverable
-                            >
-                                <Flex align="center" gap={8}>
-                                    <StatusIcon status={item.status}/>
-                                    <Title level={5}
-                                           style={{ margin: 0 }}>{item.seat_id}</Title>
+            <Row gutter={[16, 16]} style={{ padding: 16 }}>
+                {seats.map((item) => (
+                    <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
+                         xl={4}>
+                        <Card
+                            bodyStyle={{ padding: 12 }}
+                            hoverable
+                        >
+                            <Flex align="center" gap={8}>
+                                <StatusIcon status={item.status}/>
+                                <Title level={5}
+                                       style={{ margin: 0 }}>{item.seat_id}</Title>
 
-                                    {item.status === '可预约'
-                                        ? (<Button onClick={() => handleOrder(
-                                                item)}>可预约</Button>)
-                                        : item.status === '暂停预约'
-                                            ? (<Button type="primary"
-                                                       onClick={notify.suspend}>暂停预约</Button>)
-                                            : (<Button danger
-                                                       onClick={notify.ordered}>已预约</Button>)}
-                                </Flex>
-                            </Card>
-                        </Col>))}
-                </Row>
-            </Flex>
-        </>)
+                                {item.status === '可预约'
+                                    ? (<Button onClick={() => handleOrder(
+                                        item)}>可预约</Button>)
+                                    : item.status === '暂停预约'
+                                        ? (<Button type="primary"
+                                                   onClick={notify.suspend}>暂停预约</Button>)
+                                        : (<Button danger
+                                                   onClick={notify.ordered}>已预约</Button>)}
+                            </Flex>
+                        </Card>
+                    </Col>))}
+            </Row>
+        </Flex>
+    </>)
 }
