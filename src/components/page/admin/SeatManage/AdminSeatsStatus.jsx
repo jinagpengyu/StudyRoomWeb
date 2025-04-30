@@ -1,4 +1,4 @@
-import { Button, Modal, Select, Space, Table, Tag } from 'antd'
+import { Button, message, Modal, Select, Space, Table, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 
 const api_url = import.meta.env.VITE_API_URL
@@ -45,9 +45,57 @@ export default function AdminSeatsStatus() {
             ),
         }
     ]
+    // 修改单个座位状态
+    const changeSeatsStatus = async (seat_id,target_status) => {
+        try {
+            const response = await fetch(`${api_url}/admin/changeSeatStatus`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json' ,
+                    'Authorization' : `Bearer ${localStorage.getItem('token')}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({ seat_id, target_status }),
+            })
+            const result = await response.json()
+            if (result.status === 200){
+                message.success(result.message)
+            }else{
+                message.error('修改座位状态失败')
+            }
+        }catch (e) {
+            console.error(e)
+        }
+    }
+    // 批量修改状态
+    const handleBatchUpdateStatus = async (target_status) => {
+        try {
+            const response = await fetch(`${api_url}/admin/changeSeatStatusBatch`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json' ,
+                    'Authorization' : `Bearer ${localStorage.getItem('token')}`
+                },
+                credentials: 'include',
+                body: JSON.stringify({ seat_arr: selectedRowKeys, target_status }),
+            })
+            const result = await response.json()
+            if(result.status === 200){
+                message.success(result.message)
+            }else{
+                message.error('批量修改座位状态失败')
+            }
+        }catch (e) {
+            console.error(e)
+        }finally {
+            GetSeatsStatus().then(() => console.log("成功获取数据"))
+        }
+    }
+
     const rowSelection = {
         selectedRowKeys,
         onChange: (newSelectedKeys) => {
+            console.log(newSelectedKeys)
             setSelectedRowKeys(newSelectedKeys);
         },
         selections: [
@@ -92,7 +140,7 @@ export default function AdminSeatsStatus() {
             >
                 <Button
                     type="primary"
-                    // onClick={() => handleBatchUpdateStatus('可预约')}
+                    onClick={() => handleBatchUpdateStatus('可预约')}
                     disabled={selectedRowKeys.length === 0}
                 >
                     批量设为可预约
@@ -100,10 +148,10 @@ export default function AdminSeatsStatus() {
                 <Button
                     danger
                     type="primary"
-                    // onClick={() => handleBatchUpdateStatus('不可预约')}
+                    onClick={() => handleBatchUpdateStatus('暂停预约')}
                     disabled={selectedRowKeys.length === 0}
                 >
-                    批量设为不可预约
+                    批量设为暂停预约
                 </Button>
                 <span style={{ marginLeft: 8 }}>
                 已选择 {selectedRowKeys.length} 个座位
@@ -118,6 +166,11 @@ export default function AdminSeatsStatus() {
             <Modal
                 title={`修改座位 ${selectedSeat.seat_id} 的状态`}
                 open={modalOpen}
+                onOk={() => {
+                    changeSeatsStatus(selectedSeat.seat_id,selectedSeat.nowStatus)
+                        .then(() => setModalOpen(false))
+                        .then(() => GetSeatsStatus())
+                }}
                 onCancel={() => setModalOpen(false)}
                 okText="确认"
                 cancelText="取消"
@@ -134,10 +187,10 @@ export default function AdminSeatsStatus() {
                                 nowStatus: value
                             })}
                         >
-                            <Select.Option value="active">
+                            <Select.Option value="可预约">
                                 可预约
                             </Select.Option>
-                            <Select.Option value="stop">
+                            <Select.Option value="暂停预约">
                                 暂停预约
                             </Select.Option>
                         </Select>
