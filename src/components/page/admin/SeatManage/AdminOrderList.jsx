@@ -2,88 +2,88 @@ import {
     Button,
     DatePicker,
     Flex, Form,
-    Input,
+    Input, message,
     Modal,
     Select,
     Space,
     Table,
 } from 'antd'
 import { DeleteOutlined, EditOutlined, SwapOutlined } from '@ant-design/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-const data_1 = [
-    {
-        user_name: '张三',
-        seat_id: 1,
-        order_date: '2025-04-20',
-        create_time: '2025-04-20',
-        status: '已预约',
-    },
-    {
-        user_name: '李四',
-        seat_id: 2,
-        order_date: '2025-04-21',
-        create_time: '2025-04-21',
-        status: '已预约',
-    },
-    {
-        user_name: '王五',
-        seat_id: 3,
-        order_date: '2025-04-22',
-        create_time: '2025-04-22',
-        status: '过期',
-    },
-    {
-        user_name: '赵六',
-        seat_id: 4,
-        order_date: '2025-04-23',
-        create_time: '2025-04-23',
-        status: '取消',
-    },
-    {
-        user_name: '陈七',
-        seat_id: 5,
-        order_date: '2025-04-24',
-        create_time: '2025-04-24',
-        status: '取消',
-    },
-    {
-        user_name: '周八',
-        seat_id: 6,
-        order_date: '2025-04-25',
-        create_time: '2025-04-25',
-        status: '已预约',
-    },
-    {
-        user_name: '吴九',
-        seat_id: 7,
-        order_date: '2025-04-26',
-        create_time: '2025-04-26',
-        status: '过期',
-    },
-    {
-        user_name: '郑十',
-        seat_id: 8,
-        order_date: '2025-04-27',
-        create_time: '2025-04-27',
-        status: '过期',
-    },
-    {
-        user_name: '孙十一',
-        seat_id: 9,
-        order_date: '2025-04-28',
-        create_time: '2025-04-28',
-        status: '过期',
-    },
-    {
-        user_name: '徐十二',
-        seat_id: 10,
-        order_date: '2025-04-29',
-        create_time: '2025-04-29',
-        status: '已预约',
-    }
-];
-
+// const data_1 = [
+//     {
+//         user_name: '张三',
+//         seat_id: 1,
+//         order_date: '2025-04-20',
+//         create_time: '2025-04-20',
+//         status: '已预约',
+//     },
+//     {
+//         user_name: '李四',
+//         seat_id: 2,
+//         order_date: '2025-04-21',
+//         create_time: '2025-04-21',
+//         status: '已预约',
+//     },
+//     {
+//         user_name: '王五',
+//         seat_id: 3,
+//         order_date: '2025-04-22',
+//         create_time: '2025-04-22',
+//         status: '过期',
+//     },
+//     {
+//         user_name: '赵六',
+//         seat_id: 4,
+//         order_date: '2025-04-23',
+//         create_time: '2025-04-23',
+//         status: '取消',
+//     },
+//     {
+//         user_name: '陈七',
+//         seat_id: 5,
+//         order_date: '2025-04-24',
+//         create_time: '2025-04-24',
+//         status: '取消',
+//     },
+//     {
+//         user_name: '周八',
+//         seat_id: 6,
+//         order_date: '2025-04-25',
+//         create_time: '2025-04-25',
+//         status: '已预约',
+//     },
+//     {
+//         user_name: '吴九',
+//         seat_id: 7,
+//         order_date: '2025-04-26',
+//         create_time: '2025-04-26',
+//         status: '过期',
+//     },
+//     {
+//         user_name: '郑十',
+//         seat_id: 8,
+//         order_date: '2025-04-27',
+//         create_time: '2025-04-27',
+//         status: '过期',
+//     },
+//     {
+//         user_name: '孙十一',
+//         seat_id: 9,
+//         order_date: '2025-04-28',
+//         create_time: '2025-04-28',
+//         status: '过期',
+//     },
+//     {
+//         user_name: '徐十二',
+//         seat_id: 10,
+//         order_date: '2025-04-29',
+//         create_time: '2025-04-29',
+//         status: '已预约',
+//     }
+// ];
+const api_url = import.meta.env.VITE_API_URL;
 export default function AdminOrderList() {
     const columns = [
         {
@@ -132,31 +132,36 @@ export default function AdminOrderList() {
                         type="text"
                         icon={<DeleteOutlined style={{ color: '#ff4d4f' }} />}
                         style={{ color: '#ff4d4f' }}
-                        onClick={() => setModalVisible(true)}
+                        onClick={() => {
+                            setCurrentRecord(record)
+                            setModalVisible(true)
+                        }}
                     >
                         删除
                     </Button>
 
-                    {/* 修改状态 - 编辑操作使用蓝色 */}
-                    <Button
-                        type="text"
-                        icon={<EditOutlined style={{ color: '#4096ff' }} />}
-                        style={{ color: '#4096ff' }}
-                        onClick={() => {
-                            setCurrentRecord(record)
-                            setUpdateModalVisible(true)
-                        }}
-                    >
-                        修改状态
-                    </Button>
+                    {/*/!* 修改状态 - 编辑操作使用蓝色 *!/*/}
+                    {/*<Button*/}
+                    {/*    type="text"*/}
+                    {/*    icon={<EditOutlined style={{ color: '#4096ff' }} />}*/}
+                    {/*    style={{ color: '#4096ff' }}*/}
+                    {/*    onClick={() => {*/}
+                    {/*        setCurrentRecord(record)*/}
+                    {/*        setUpdateModalVisible(true)*/}
+                    {/*    }}*/}
+                    {/*>*/}
+                    {/*    修改状态*/}
+                    {/*</Button>*/}
 
                     {/* 换座操作 - 中性操作使用绿色 */}
                     <Button
                         type="text"
                         icon={<SwapOutlined style={{ color: '#52c41a' }} />}
                         style={{ color: '#52c41a' }}
-                        onClick={() => {
+                        onClick={async () => {
                             setCurrentRecord(record)
+                            setChangeSeatOptions(await getActiveSeat(record.order_date))
+                            console.log(changeSeatOptions)
                             setChangeSeatModalVisible(true)
                         }}
                     >
@@ -166,21 +171,41 @@ export default function AdminOrderList() {
             )
         }
     ]
+    const [data, setData] = useState(null)
     const [selectedDate, setSelectedDate] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
     const [currentRecord, setCurrentRecord] = useState(null)
-    const [updateModalVisible, setUpdateModalVisible] = useState(false) // 新增：修改状态弹窗
+    // const [updateModalVisible, setUpdateModalVisible] = useState(false) // 新增：修改状态弹窗
     const [changeSeatModalVisible, setChangeSeatModalVisible] = useState(false) // 新增：换座弹窗
-    const [selectedStatus, setSelectedStatus] = useState('')
+    // const [selectedStatus, setSelectedStatus] = useState('')
     const [selectedSeat, setSelectedSeat] = useState('') // 新增座位选择状态
-    const seatOptions = Array.from({ length: 30 }, (_, i) => ({
-        value: i + 1,
-        label: `座位 ${i + 1}`
-    }))
-
+    const [changeSeatOptions, setChangeSeatOptions] = useState([]) ;
+    const getAllUserOrderData = async () => {
+        try{
+            const response = await fetch(`${api_url}/admin/getAllOrderHistory`, {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':`Bearer ${localStorage.getItem('token')}`
+                }
+            })
+            const result = await response.json()
+            if(result.status === 200){
+                setData(result.data)
+                // console.log(result.data)
+            }else{
+                new Error('无数据')
+            }
+        }catch (e) {
+            console.error(e)
+        }
+    }
+    useEffect(() => {
+        getAllUserOrderData().then(() => console.log('获取数据成功'))
+    }, [])
     // 双维度数据过滤
-    const filteredData = data_1.filter(item => {
+    const filteredData = data?.filter(item => {
         // 日期匹配检查
         const isDateMatch = !selectedDate || item.order_date === selectedDate
 
@@ -199,22 +224,66 @@ export default function AdminOrderList() {
         setSearchTerm(e.target.value)
     }
 
-    // 处理删除按钮点击
+    // // 处理删除按钮点击
     // const handleDeleteClick = (record) => {
     //     setCurrentRecord(record)
     //     setModalVisible(true)
     // }
 
     // 确认删除操作
-    const confirmDelete = () => {
-        // 从数据源中移除指定记录
-        // setDataSource(prev => prev.filter(item =>
-        //     item.seat_id !== currentRecord.seat_id
-        // ))
+    const confirmDelete = async () => {
+        try{
+            const response = await fetch(`${api_url}/admin/deleteOneOrder`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    order_id: currentRecord?._id
+                })
+            })
+            const result = await response.json()
+            if(result.status === 200){
+                // 清理状态
+                setModalVisible(false)
+                setCurrentRecord(null)
+                message.success('删除成功')
+                await getAllUserOrderData()
+            }else{
+                message.error('删除失败')
+            }
+        }catch (e) {
+            console.error(e)
+        }
+    }
 
-        // 清理状态
-        setModalVisible(false)
-        setCurrentRecord(null)
+    const confirmChangeSeat = async () => {
+        try{
+            const response = await fetch(`${api_url}/admin/changeSeat`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    order_id: currentRecord?._id,
+                    target_seat_id: selectedSeat
+                })
+            })
+            const result = await response.json()
+            if(result.status === 200){
+                // 清理状态
+                setChangeSeatModalVisible(false)
+                setCurrentRecord(null)
+                message.success('换座成功')
+                await getAllUserOrderData()
+            }else{
+                message.error('换座失败')
+            }
+        }catch (e) {
+            console.error(e)
+        }
     }
 
     // 取消删除操作
@@ -222,6 +291,30 @@ export default function AdminOrderList() {
         setModalVisible(false)
         setCurrentRecord(null)
     }
+    const getActiveSeat = async (date) => {
+        try{
+            const response = await fetch(`${api_url}/api/seat/Status`, {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':`Bearer ${localStorage.getItem('token')}`
+                },
+                body:JSON.stringify({
+                    date: date
+                })
+            })
+            const result = await response.json()
+            if(result.status === 200){
+                // console.log(result.data)
+                return result.data?.filter(item => item.status === '可预约')
+            }else{
+                new Error('无数据')
+            }
+        }catch (e){
+            console.error(e)
+        }
+    }
+
     return (
         <div style={{ width: '100%', padding: '24px' }}>
             {/* 查询条件区域 */}
@@ -279,50 +372,50 @@ export default function AdminOrderList() {
                 <p style={{ color: '#ff4d4f' }}>此操作不可撤销</p>
             </Modal>
 
-            {/* 修改状态模态框 */}
-            <Modal
-                title="修改状态"
-                open={updateModalVisible}
-                onOk={() => {
-                    console.log('提交状态修改:', selectedStatus)
-                    setUpdateModalVisible(false)
-                }}
-                onCancel={() => {
-                    setUpdateModalVisible(false)
-                    setSelectedStatus('')
-                }}
-                okText="确认修改"
-                cancelText="取消"
-            >
-                <p>修改 <strong>{currentRecord?.user_name}</strong> 的预约状态：</p>
+            {/*/!* 修改状态模态框 *!/*/}
+            {/*<Modal*/}
+            {/*    title="修改状态"*/}
+            {/*    open={updateModalVisible}*/}
+            {/*    onOk={() => {*/}
+            {/*        console.log('提交状态修改:', selectedStatus)*/}
+            {/*        setUpdateModalVisible(false)*/}
+            {/*    }}*/}
+            {/*    onCancel={() => {*/}
+            {/*        setUpdateModalVisible(false)*/}
+            {/*        setSelectedStatus('')*/}
+            {/*    }}*/}
+            {/*    okText="确认修改"*/}
+            {/*    cancelText="取消"*/}
+            {/*>*/}
+            {/*    <p>修改 <strong>{currentRecord?.user_name}</strong> 的预约状态：</p>*/}
 
-                <Form layout="vertical" style={{ marginTop: 16 }}>
-                    <Form.Item label="目标状态" required>
-                        <Select
-                            value={selectedStatus}
-                            onChange={(value) => setSelectedStatus(value)}
-                            options={[
-                                { value: '取消', label: '取消' },
-                                { value: '过期', label: '过期' }
-                            ]}
-                            placeholder="请选择状态"
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
+            {/*    <Form layout="vertical" style={{ marginTop: 16 }}>*/}
+            {/*        <Form.Item label="目标状态" required>*/}
+            {/*            <Select*/}
+            {/*                value={selectedStatus}*/}
+            {/*                onChange={(value) => setSelectedStatus(value)}*/}
+            {/*                options={[*/}
+            {/*                    { value: '取消', label: '取消' },*/}
+            {/*                    { value: '过期', label: '过期' }*/}
+            {/*                ]}*/}
+            {/*                placeholder="请选择状态"*/}
+            {/*                style={{ width: '100%' }}*/}
+            {/*            />*/}
+            {/*        </Form.Item>*/}
 
-                    <div style={{ color: '#4096ff', fontSize: 12, marginTop: 8 }}>
-                        当前状态：<span style={{ fontWeight: 500 }}>{currentRecord?.status}</span>
-                    </div>
-                </Form>
-            </Modal>
+            {/*        <div style={{ color: '#4096ff', fontSize: 12, marginTop: 8 }}>*/}
+            {/*            当前状态：<span style={{ fontWeight: 500 }}>{currentRecord?.status}</span>*/}
+            {/*        </div>*/}
+            {/*    </Form>*/}
+            {/*</Modal>*/}
 
             {/* 换座模态框 */}
             <Modal
                 title="换座操作"
                 open={changeSeatModalVisible}
                 onOk={() => {
-                    console.log('提交换座:', selectedSeat)
-                    setChangeSeatModalVisible(false)
+                    // console.log('提交换座:', selectedSeat)
+                    confirmChangeSeat().then(() => console.log('换座'))
                 }}
                 onCancel={() => {
                     setChangeSeatModalVisible(false)
@@ -338,7 +431,8 @@ export default function AdminOrderList() {
                         <Select
                             value={selectedSeat}
                             onChange={(value) => setSelectedSeat(value)}
-                            options={seatOptions}
+                            options={changeSeatOptions}
+                            fieldNames={{ value: 'seat_id', label: 'seat_id' }} // 自定义字段名
                             placeholder="请选择座位号"
                             style={{ width: '100%' }}
                         />
