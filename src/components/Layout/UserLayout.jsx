@@ -31,18 +31,18 @@ const { Header, Sider } = Layout;
 const Pages = {
     "OrderSeatPage" : <OrderSeatPage/>,
     "OrderSeatHistory" : <OrderHistoryPage/>,
-    "ConventionPage":<Convention/>,
-    "NoticePage":<NoticePage/>,
-    "NewReportPage":<NewReportPage/>,
-    "ReportHistoryPage":<ReportHistoryPage/>,
-    "UserInfoPage":<UserInfoPage/>,
-    "AdminOrderSeatPage":<AdminSeatsManage/>,
-    "AdminSeatsStatusPage":<AdminSeatsStatus/>,
-    "UserManagePage":<UserManagePage/>,
-    "AdminOrderList":<AdminOrderList/>,
-    "AdminNoticePage":<AdminNoticePage/>,
-    "AdminSystemPage":<AdminSystemPage/>,
-    "AdminConventionPage":<AdminConventionPage/>
+    "ConventionPage": <Convention/>,
+    "NoticePage": <NoticePage/>,
+    "NewReportPage": <NewReportPage/>,
+    "ReportHistoryPage": <ReportHistoryPage/>,
+    "UserInfoPage": <UserInfoPage/>,
+    "AdminOrderSeatPage": <AdminSeatsManage/>,
+    "AdminSeatsStatusPage": <AdminSeatsStatus/>,
+    "UserManagePage": <UserManagePage/>,
+    "AdminOrderList": <AdminOrderList/>,
+    "AdminNoticePage": <AdminNoticePage/>,
+    "AdminSystemPage": <AdminSystemPage/>,
+    "AdminConventionPage": <AdminConventionPage/>
 }
 
 const UserLayout = () => {
