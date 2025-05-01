@@ -1,60 +1,74 @@
-import { useState } from 'react';
-import {  Button, Modal, Table, Form , Input} from 'antd'
+import { useEffect, useState } from 'react'
+import { Button, Modal, Table, Form, Input, message, Radio, Space } from 'antd'
 
-
+const api_url = import.meta.env.VITE_API_URL;
 export default function AdminConventionPage() {
-    const mockConventions = [
-        {
-            id: 1,
-            context: "禁止在自习室吃东西",
-            status: true,
-            createdAt: "2023-09-20"
-        },
-        {
-            id: 2,
-            context: "请您对号入座,自觉保持安静，请将手机及其他电子设备调至静音模式，请勿外放音乐。",
-            status: true,
-            createdAt: "2023-09-18"
-        },
-        {
-            id: 3,
-            context: "自习室内禁止大声喧哗，如需讨论问题，请前往讨论区或者背书区",
-            status: false,
-            createdAt: "2023-09-15"
-        },
-        {
-            id: 4,
-            context: "使用耳机时，请控制音量，避免打扰他人",
-            status: true,
-            createdAt: "2023-09-12"
-        },
-        {
-            id: 5,
-            context: "使用电脑时请尽量小声敲打键盘、鼠标，功能区可借用静音键盘膜",
-            status: false,
-            createdAt: "2023-09-10"
-        }
-    ];
-
+    const [form] = Form.useForm();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-// 修改mock数据为state
-    const [conventions, setConventions] = useState(mockConventions);
-
-// 删除处理函数
-    const handleDelete = (id) => {
-        Modal.confirm({
-            title: '确认删除该公约？',
-            onOk: () => {
-                setConventions(prev => prev.filter(item => item.id !== id));
-            }
-        });
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [conventions, setConventions] = useState(null);
+    const [currentConvention, setCurrentConvention] = useState(null);
+    // 新公约处理函数
+    const handleNewConvention = async (values) => {
+        const { context } = values;
+        const response = await fetch(`${api_url}/admin/createNewConvention`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                context
+            })
+        })
+        if(response.status === 200){
+            message.success('创建成功');
+            await getConventions();
+            setIsAddModalOpen(false);
+        }
     };
+    // 删除处理函数
+    const handleDelete = async () => {
+        const response = await fetch(`${api_url}/admin/deleteOneConvention`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                convention_id: currentConvention._id
+            })
+        })
+        if (response.status === 200){
+            message.success('删除成功');
+            setIsDeleteModalOpen(false);
+            await getConventions();
+        }else{
+            message.error('删除失败');
+        }
+    };
+    // 从后台获取所有的公约数据
+    const getConventions = async () => {
+        const response = await fetch(`${api_url}/admin/all_convention`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        })
+        if(response.status === 200){
+            const result = await response.json();
+            setConventions(result.data);
+        }else{
+            message.error('获取公约数据失败');
+        }
+    };
+    useEffect( () => {
+        getConventions().then(() => {
+            console.log('获取公约数据');
+        })
+    }, [])
     const conventionColumns = [
-        {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-        },
         {
             title: '内容',
             dataIndex: 'context',
@@ -67,7 +81,10 @@ export default function AdminConventionPage() {
                 <Button
                     type="link"
                     danger
-                    onClick={() => handleDelete(record.id)}
+                    onClick={() => {
+                        setCurrentConvention(record);
+                        setIsDeleteModalOpen(true);
+                    } }
                 >
                     删除
                 </Button>
@@ -86,40 +103,58 @@ export default function AdminConventionPage() {
         >
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
                 <Button
-                    onClick={() => setIsAddModalOpen(true)}
+                    onClick={() => {
+                        setIsAddModalOpen(true)
+                    }}
                 >
                     添加公约
                 </Button>
 
                 <Modal
+                    title="创建新公约"
                     open={isAddModalOpen}
                     onCancel={() => setIsAddModalOpen(false)}
+                    footer={null}
                 >
-                    <Form.Item
-                        label="公约内容"
-                        name="context"
-                        rules={[
-                            { required: true, message: '请输入公约内容' },
-                            { max: 100, message: '不能超过100个字符' }
-                        ]}
-                        layout="vertical"
+                    <Form form={form} onFinish={handleNewConvention}>
+                        <Form.Item label="内容" name="context"
+                                   initialValue={''}
+                                   rules={[{ required: true }]}>
+                            <Input.TextArea rows={4} placeholder="请输入公约内容"/>
+                        </Form.Item>
 
-                    >
-                        <Input.TextArea
-                            rows={4}
-                            showCount
-                            maxLength={100}
-                        />
-                    </Form.Item>
+                        <div style={{ textAlign: 'right' }}>
+                            <Space>
+                                <Button onClick={() => setIsAddModalOpen(false)}>取消</Button>
+                                <Button type="primary" htmlType="submit">
+                                    发布
+                                </Button>
+                            </Space>
+                        </div>
+                    </Form>
                 </Modal>
+
 
                 <div style={{ marginTop: 24 }}>
                     <Table
                         columns={conventionColumns}
                         dataSource={conventions}
-                        rowKey="id" // 添加rowKey确保控制台无警告
+                        rowKey="_id" // 添加rowKey确保控制台无警告
                     />
                 </div>
+
+                <Modal
+                    title="确定删除该公约吗？"
+                    open={isDeleteModalOpen}
+                    onCancel={() => setIsDeleteModalOpen(false)}
+                    onOk={async () => {
+                        await handleDelete();
+                        setIsDeleteModalOpen(false);
+                        await getConventions();
+                    }}
+                >
+
+                </Modal>
             </div>
         </div>
     )
