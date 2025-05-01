@@ -4,8 +4,10 @@ import { Button, Modal, Table, Form, Input, message, Radio, Space } from 'antd'
 const api_url = import.meta.env.VITE_API_URL;
 export default function AdminConventionPage() {
     const [form] = Form.useForm();
+    const [updateForm] = Form.useForm();
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [conventions, setConventions] = useState(null);
     const [currentConvention, setCurrentConvention] = useState(null);
     // 新公约处理函数
@@ -27,6 +29,29 @@ export default function AdminConventionPage() {
             setIsAddModalOpen(false);
         }
     };
+    // 修改公约内容处理函数
+    const handleUpdateContext = async (values) => {
+        const { context } = values;
+        const response = await fetch(`${api_url}/admin/changeConventionContext`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify({
+                convention_id: currentConvention._id,
+                context
+            })
+        })
+        if(response.status === 200){
+            message.success('修改成功');
+            await getConventions();
+            setIsUpdateModalOpen(false);
+        }else{
+            message.error('修改失败');
+        }
+
+    }
     // 删除处理函数
     const handleDelete = async () => {
         const response = await fetch(`${api_url}/admin/deleteOneConvention`,{
@@ -78,16 +103,31 @@ export default function AdminConventionPage() {
             title: '操作',
             key: 'action',
             render: (_, record) => (
-                <Button
-                    type="link"
-                    danger
-                    onClick={() => {
-                        setCurrentConvention(record);
-                        setIsDeleteModalOpen(true);
-                    } }
-                >
-                    删除
-                </Button>
+                <Space size={'middle'}>
+                    <Button
+                        type="link"
+                        danger
+                        onClick={() => {
+                            setCurrentConvention(record);
+                            setIsDeleteModalOpen(true);
+                        } }
+                    >
+                        删除
+                    </Button>
+                    <Button
+                        type={'link'}
+                        onClick={() => {
+                            setCurrentConvention(record);
+                            setIsUpdateModalOpen(true);
+                            updateForm.setFieldsValue({
+                                context: record.context
+                            })
+                        } }
+                    >
+                        修改
+                    </Button>
+                </Space>
+
             )
         }
 
@@ -126,6 +166,30 @@ export default function AdminConventionPage() {
                         <div style={{ textAlign: 'right' }}>
                             <Space>
                                 <Button onClick={() => setIsAddModalOpen(false)}>取消</Button>
+                                <Button type="primary" htmlType="submit">
+                                    发布
+                                </Button>
+                            </Space>
+                        </div>
+                    </Form>
+                </Modal>
+
+                <Modal
+                    title="修改该公约"
+                    open={isUpdateModalOpen}
+                    onCancel={() => setIsUpdateModalOpen(false)}
+                    footer={null}
+                >
+                    <Form form={updateForm} onFinish={handleUpdateContext}>
+                        <Form.Item label="内容" name="context"
+                                   initialValue={''}
+                                   rules={[{ required: true }]}>
+                            <Input.TextArea rows={4} placeholder="请输入公约内容"/>
+                        </Form.Item>
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Space>
+                                <Button onClick={() => setIsUpdateModalOpen(false)}>取消</Button>
                                 <Button type="primary" htmlType="submit">
                                     发布
                                 </Button>
