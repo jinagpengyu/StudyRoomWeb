@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Button, Modal, Table, Form, Input, message, Radio, Space } from 'antd'
+import {
+    Button,
+    Modal,
+    Table,
+    Form,
+    Input,
+    message,
+    Radio,
+    Space,
+    Card,
+} from 'antd'
 
 const api_url = import.meta.env.VITE_API_URL;
 export default function AdminConventionPage() {
@@ -133,93 +143,85 @@ export default function AdminConventionPage() {
 
     ]
     return (
-        <div
-            style={{
-                height: '100vh',
-                padding: '0 40px',
-                boxSizing: 'border-box',
-                overflowY: 'auto'
-            }}
-        >
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-                <Button
-                    onClick={() => {
-                        setIsAddModalOpen(true)
-                    }}
-                >
-                    添加公约
-                </Button>
 
-                <Modal
-                    title="创建新公约"
-                    open={isAddModalOpen}
-                    onCancel={() => setIsAddModalOpen(false)}
-                    footer={null}
-                >
-                    <Form form={form} onFinish={handleNewConvention}>
-                        <Form.Item label="内容" name="context"
-                                   initialValue={''}
-                                   rules={[{ required: true }]}>
-                            <Input.TextArea rows={4} placeholder="请输入公约内容"/>
-                        </Form.Item>
+        <div style={{ padding : '24px'}}>
+            <Card title={'公约管理'}
+                  extra={<Button
+                          onClick={() => {
+                              setIsAddModalOpen(true)
+                              form.setFieldsValue({
+                                  context: ''
+                              })
+                          }}>
+                          添加公约</Button>}
+            >
+                <Table
+                    columns={conventionColumns}
+                    dataSource={conventions}
+                    pagination={{ pageSize: 8 }}
+                    rowKey="_id" // 添加rowKey确保控制台无警告
+                />
+            </Card>
+            <Modal
+                title="确定删除该公约吗？"
+                open={isDeleteModalOpen}
+                onCancel={() => setIsDeleteModalOpen(false)}
+                onOk={async () => {
+                    await handleDelete();
+                    setIsDeleteModalOpen(false);
+                    await getConventions();
+                }}
+            >
 
-                        <div style={{ textAlign: 'right' }}>
-                            <Space>
-                                <Button onClick={() => setIsAddModalOpen(false)}>取消</Button>
-                                <Button type="primary" htmlType="submit">
-                                    发布
-                                </Button>
-                            </Space>
-                        </div>
-                    </Form>
-                </Modal>
+            </Modal>
 
-                <Modal
-                    title="修改该公约"
-                    open={isUpdateModalOpen}
-                    onCancel={() => setIsUpdateModalOpen(false)}
-                    footer={null}
-                >
-                    <Form form={updateForm} onFinish={handleUpdateContext}>
-                        <Form.Item label="内容" name="context"
-                                   initialValue={''}
-                                   rules={[{ required: true }]}>
-                            <Input.TextArea rows={4} placeholder="请输入公约内容"/>
-                        </Form.Item>
+            <Modal
+                title="创建新公约"
+                open={isAddModalOpen}
+                onCancel={() => setIsAddModalOpen(false)}
+                footer={null}
+            >
+                <Form form={form} onFinish={handleNewConvention}>
+                    <Form.Item label="内容" name="context"
+                               initialValue={''}
+                               rules={[{ required: true }]}>
+                        <Input.TextArea rows={4} placeholder="请输入公约内容"/>
+                    </Form.Item>
 
-                        <div style={{ textAlign: 'right' }}>
-                            <Space>
-                                <Button onClick={() => setIsUpdateModalOpen(false)}>取消</Button>
-                                <Button type="primary" htmlType="submit">
-                                    发布
-                                </Button>
-                            </Space>
-                        </div>
-                    </Form>
-                </Modal>
+                    <div style={{ textAlign: 'right' }}>
+                        <Space>
+                            <Button onClick={() => setIsAddModalOpen(false)}>取消</Button>
+                            <Button type="primary" htmlType="submit">
+                                发布
+                            </Button>
+                        </Space>
+                    </div>
+                </Form>
+            </Modal>
 
+            <Modal
+                title="修改该公约"
+                open={isUpdateModalOpen}
+                onCancel={() => setIsUpdateModalOpen(false)}
+                footer={null}
+            >
+                <Form form={updateForm} onFinish={handleUpdateContext}>
+                    <Form.Item label="内容" name="context"
+                               initialValue={''}
+                               rules={[{ required: true }]}>
+                        <Input.TextArea rows={4} placeholder="请输入公约内容"/>
+                    </Form.Item>
 
-                <div style={{ marginTop: 24 }}>
-                    <Table
-                        columns={conventionColumns}
-                        dataSource={conventions}
-                        rowKey="_id" // 添加rowKey确保控制台无警告
-                    />
-                </div>
-
-                <Modal
-                    title="确定删除该公约吗？"
-                    open={isDeleteModalOpen}
-                    onCancel={() => setIsDeleteModalOpen(false)}
-                    onOk={async () => {
-                        await handleDelete();
-                        setIsDeleteModalOpen(false);
-                        await getConventions();
-                    }}
-                >
-
-                </Modal>
-            </div>
+                    <div style={{ textAlign: 'right' }}>
+                        <Space>
+                            <Button onClick={() => setIsUpdateModalOpen(false)}>取消</Button>
+                            <Button type="primary" htmlType="submit">
+                                发布
+                            </Button>
+                        </Space>
+                    </div>
+                </Form>
+            </Modal>
         </div>
     )
 }

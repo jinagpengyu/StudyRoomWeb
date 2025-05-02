@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 const api_url = import.meta.env.VITE_API_URL;
 export default function UserManagePage () {
     const [data, setData] = useState(null)
-    // const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
     const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -148,7 +147,7 @@ export default function UserManagePage () {
         action: PropTypes.oneOf(['加入', '移出']).isRequired
     };
     return (
-        <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ padding: 24,width: '100%', margin: '0 auto' }}>
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -166,14 +165,11 @@ export default function UserManagePage () {
 
             <Table
                 columns={columns}
-                dataSource={data}
+                dataSource={Array.isArray(data) && data}
                 rowKey="_id"
                 bordered
                 pagination={{
                     pageSize: 5, showTotal: total => `共 ${total} 条`,
-                }}
-                style={{
-                    width: 1000,
                 }}
             />
             {/*黑名单模态窗*/}
