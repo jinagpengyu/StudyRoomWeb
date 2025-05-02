@@ -7,20 +7,21 @@ const api_url = import.meta.env.VITE_API_URL;
 export default function NoticePage(){
     const [messages,setMessages] = useState([])
     const GetMessages = async () => {
-        const response = await fetch(`${api_url}/api/getAllPublishNotice`, {
+        const response = await fetch(`${api_url}/api/getAllPublishNotice`,{
             method:"POST",
+            credentials:"include",
             headers:{
                 "Content-Type":"application/json",
             },
-            credentials:"include",
-        }).then(response => response.json()).catch(err => console.log(err));
-        if(response.status === 200){
-            setMessages(response.data);
+        })
+        if (response.status === 200) {
+            const result = await response.json();
+            setMessages(result.data)
         }
 
     }
     useEffect(() => {
-        GetMessages()
+        GetMessages().then(() => console.log('获取所有通知数据'))
     },[])
     return (
         <>
