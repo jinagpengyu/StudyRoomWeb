@@ -92,27 +92,6 @@ const UserLayout = () => {
                     items={(() => {
                         const role = localStorage.getItem('role') || 'user'; // 添加默认值
 
-                        // 公共菜单项
-                        const baseMenu = role === "user" ? [
-                            {
-                                key: '1',
-                                icon: <UserOutlined />,
-                                label: '座位预约中心',
-                                children: [
-                                    {
-                                        key: '1-1',
-                                        label: '座位预约',
-                                        onClick: () => setCurrentPage("OrderSeatPage")
-                                    },
-                                    {
-                                        key: '1-2',
-                                        label: '预约记录',
-                                        onClick: () => setCurrentPage("OrderSeatHistory")
-                                    }
-                                ]
-                            }
-                        ] : [];
-
                         // 管理员扩展菜单
                         const adminMenu = role === 'admin' ? [
                             {
@@ -168,27 +147,50 @@ const UserLayout = () => {
                         // 用户专属菜单
                         const userMenu = role === 'user' ? [
                             {
-                                key: '2',
-                                icon: <VideoCameraOutlined />,
-                                label: '信息中心',
-                                children: [
-                                    { key: '2-1', label: '自习室公约', onClick: () => setCurrentPage("ConventionPage") },
-                                    { key: '2-2', label: '通知公告', onClick: () => setCurrentPage("NoticePage") }
-                                ]
+                                key:'user-nav-1',
+                                icon: <UserOutlined />,
+                                label: '预约座位',
+                                onClick: () => setCurrentPage("OrderSeatPage")
                             },
                             {
-                                key: '3',
+                                key:'user-nav-2',
                                 icon: <UploadOutlined />,
-                                label: '投诉中心',
-                                children: [
-                                    { key: '3-1', label: '意见反馈', onClick: () => setCurrentPage("NewReportPage") },
-                                    { key: '3-2', label: '反馈记录', onClick: () => setCurrentPage("ReportHistoryPage") }
-                                ]
+                                label: '预约记录',
+                                onClick: () => setCurrentPage("OrderSeatHistory")
+                            },
+                            {
+                                key: 'user-nav-3',
+                                icon: <FormOutlined />,
+                                label: '自习室公约',
+                                onClick: () => setCurrentPage("ConventionPage")
+                            },
+                            {
+                                key: 'user-nav-4',
+                                icon: <BellOutlined />,
+                                label: '所有通知',
+                                onClick: () => setCurrentPage("NoticePage")
+                            },
+                            {
+                                key: 'user-nav-5',
+                                icon: <CreditCardOutlined />,
+                                label: '意见反馈',
+                                onClick: () => setCurrentPage("NewReportPage")
+                            },
+                            {
+                                key: 'user-nav-6',
+                                icon: <BellOutlined />,
+                                label: '反馈记录',
+                                onClick: () => setCurrentPage("ReportHistoryPage")
+                            },
+                            {
+                                key: 'user-nav-7',
+                                icon: <BellOutlined />,
+                                label: '系统设置',
+                                // onClick: () => setCurrentPage("UserInfoPage")
                             }
                         ] : [];
 
                         return [
-                            ...baseMenu,
                             ...adminMenu,
                             ...userMenu,
                             {
