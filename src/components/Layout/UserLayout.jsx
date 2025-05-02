@@ -7,7 +7,7 @@ import {
     UploadOutlined,
     UserOutlined,
     VideoCameraOutlined,
-    BellOutlined,
+    BellOutlined, FormOutlined, AppstoreAddOutlined, CreditCardOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, Menu, message, theme } from 'antd'
 import OrderSeatPage from '../page/OrderSeatsView/OrderSeatPage.jsx'
@@ -25,6 +25,7 @@ import AdminNoticePage from '../page/admin/NoticeManage/AdminNoticePage.jsx'
 import AdminSystemPage from '../page/admin/SystemManage/AdminSystemPage.jsx'
 import AdminConventionPage
     from '../page/admin/ConventionManage/AdminConventionPage.jsx'
+import AdminReportPage from '../page/admin/ReportManage/AdminReportPage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -42,7 +43,8 @@ const Pages = {
     "AdminOrderList": <AdminOrderList/>,
     "AdminNoticePage": <AdminNoticePage/>,
     "AdminSystemPage": <AdminSystemPage/>,
-    "AdminConventionPage": <AdminConventionPage/>
+    "AdminConventionPage": <AdminConventionPage/>,
+    "AdminReportPage": <AdminReportPage/>
 }
 
 const UserLayout = () => {
@@ -128,7 +130,7 @@ const UserLayout = () => {
                             {
                                 key: 'admin-nav-3',
                                 label: '座位管理',
-                                icon: <VideoCameraOutlined />,
+                                icon: <FormOutlined />,
                                 onClick: () => setCurrentPage("AdminSeatsStatusPage")
                             },
                             {
@@ -144,16 +146,22 @@ const UserLayout = () => {
                                 onClick: () => setCurrentPage("AdminNoticePage")
                             },
                             {
-                                key: 'admin-nav-6',
-                                label: '系统设置',
-                                icon: <AreaChartOutlined />,
-                                onClick: () => setCurrentPage("AdminSystemPage")
-                            },
-                            {
                                 key: 'admin-nav-7',
                                 label: '公约管理',
-                                icon: <AreaChartOutlined />,
+                                icon: <CreditCardOutlined />,
                                 onClick: () => setCurrentPage("AdminConventionPage")
+                            },
+                            {
+                                key: 'admin-nav-8',
+                                label: '投诉举报',
+                                icon: <BellOutlined />,
+                                onClick: () => setCurrentPage("AdminReportPage")
+                            },
+                            {
+                                key: 'admin-nav-6',
+                                label: '系统设置',
+                                icon: <AppstoreAddOutlined />,
+                                onClick: () => setCurrentPage("AdminSystemPage")
                             }
                         ] : [];
 
