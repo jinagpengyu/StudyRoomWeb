@@ -6,7 +6,6 @@ import {
     MenuUnfoldOutlined,
     UploadOutlined,
     UserOutlined,
-    VideoCameraOutlined,
     BellOutlined, FormOutlined, AppstoreAddOutlined, CreditCardOutlined,
 } from '@ant-design/icons'
 import { Button, Layout, Menu, message, theme } from 'antd'
@@ -48,7 +47,7 @@ const Pages = {
 }
 
 const UserLayout = () => {
-    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') ? 'AdminOrderSeatPage' : 'OrderSeatPage');
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') === 'admin' ? 'AdminOrderSeatPage' : 'OrderSeatPage');
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
@@ -78,8 +77,8 @@ const UserLayout = () => {
         }
     }
     const defaultKeys = (() => {
-        const role = localStorage.getItem('role') || 'user';
-        return role === 'admin' ? [ 'admin-nav-1'] : ['1-1'];
+        const role = localStorage.getItem('role');
+        return role === 'admin' ? [ 'admin-nav-1'] : ['user-nav-1'];
     })();
     return (
         <Layout style={{height: "100vh"}}>

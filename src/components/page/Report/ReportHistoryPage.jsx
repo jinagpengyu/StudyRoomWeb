@@ -18,8 +18,10 @@ export default function ReportHistoryPage() {
         if (response.status === 200) {
             const result = await response.json();
             setReports(result.data)
-        } else {
-            message.error("获取数据失败")
+        } else if (response.status === 403) {
+            message.error("请退出系统然后重新登录");
+        } else if (response.status === 401) {
+            message.error("您还没有登录，请登录");
         }
     }
 
