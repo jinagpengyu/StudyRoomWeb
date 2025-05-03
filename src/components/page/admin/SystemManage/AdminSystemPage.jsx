@@ -1,18 +1,69 @@
-import { useState } from 'react';
-import { Button, Modal, Card, Tag } from 'antd'
+import { useEffect, useState } from 'react'
+import { Button, Modal, Card, Tag, message, Radio, Form, Space } from 'antd'
 import { Box } from '@radix-ui/themes'
 
+const api_url = import.meta.env.VITE_API_URL;
 export default function AdminSystemPage() {
+    const [changeForm] = Form.useForm();
+    const [systemStatus, setSystemStatus] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    // 模拟系统状态（true=已启用，false=已停用）
-    const systemStatus = true;
 
-    const showModal = () => setIsModalOpen(true);
-    const handleOk = () => {
-        console.log('系统已设置为不可用');
-        setIsModalOpen(false);
+    const getSystemStatus = async () => {
+        try {
+            const response = await fetch(`${api_url}/admin/getClientStatus`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const result = await response.json();
+
+            if (response.status === 200) {
+                console.log('System status:', result.status);
+                setSystemStatus(result.status);
+            } else {
+                console.error('Error fetching system status:', result.message);
+            }
+        } catch (error) {
+            console.error('Error fetching system status:', error);
+        }
     };
-    const handleCancel = () => setIsModalOpen(false);
+
+    const handleChangeSystemStatus = async (values) => {
+        const { system_status } = values;
+
+        if( system_status === systemStatus ) {
+            return ;
+        }
+
+        try {
+            const response = await fetch(`${api_url}/admin/closeClient`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    system_status
+                })
+            });
+
+            if (response.status === 200) {
+                message.success('系统已设置为不可用');
+                await getSystemStatus();
+                setIsModalOpen(false);
+            } else {
+                message.error('设置系统状态失败');
+            }
+        } catch (e) {
+            console.error('Error setting system status:', e)
+        }
+    }
+
+    useEffect(() => {
+        getSystemStatus().then(() => console.log('获取数据'));
+    },[])
 
     return (
         <Box
@@ -36,24 +87,44 @@ export default function AdminSystemPage() {
                 <Button
                     type="primary"
                     danger
-                    onClick={showModal}
+                    onClick={() => {
+                        changeForm.setFieldValue('system_status', systemStatus);
+                        setIsModalOpen(true);
+                    }}
                     style={{ width: '100%' }}
                 >
-                    设置客户端系统不可用
+                    设置客户端系统状态
                 </Button>
 
                 <Modal
-                    title="确认设置"
+                    title="修改用户端系统状态"
                     open={isModalOpen}
-                    onOk={handleOk}
-                    onCancel={handleCancel}
-                    okText="确认停用"
-                    cancelText="取消"
+                    footer={null}
                 >
-                    <p>确定要将客户端系统设置为不可用吗？</p>
-                    <p style={{ color: '#ff4d4f', marginTop: 8 }}>
-                        此操作将导致所有客户端无法访问系统
-                    </p>
+                    <Form form={changeForm}
+                          onFinish={handleChangeSystemStatus}
+                    >
+                        <Form.Item name='system_status'>
+                            <Radio.Group options=
+                                             {
+                                                 [
+                                                     { value: false, label: '不可用' },
+                                                     { value: true, label: '可用' }
+                                                 ]
+                                             }
+                            />
+                        </Form.Item>
+                        <div style={{ textAlign: 'right'}}>
+                            <Space>
+                                <Button type="primary" htmlType="submit">
+                                    确认修改
+                                </Button>
+                                <Button type="default" onClick={() => setIsModalOpen(false)}>
+                                    取消
+                                </Button>
+                            </Space>
+                        </div>
+                    </Form>
                 </Modal>
             </Card>
         </Box>
