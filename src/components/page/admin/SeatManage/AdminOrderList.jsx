@@ -199,8 +199,7 @@ export default function AdminOrderList() {
                     target_seat_id: selectedSeat
                 })
             })
-            const result = await response.json()
-            if(result.status === 200){
+            if(response.status === 200){
                 // 清理状态
                 setChangeSeatModalVisible(false)
                 setCurrentRecord(null)
