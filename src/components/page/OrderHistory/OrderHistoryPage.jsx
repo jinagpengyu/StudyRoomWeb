@@ -1,30 +1,30 @@
-import {Table, Button, Modal, Tag} from 'antd'
+import {
+    Table,
+    Tag,
+    Card,
+    Space,
+    Input,
+    DatePicker,
+    Button,
+    message,
+    Modal,
+    Select,
+    Form,
+} from 'antd'
 import {useEffect, useState} from "react";
-import PropTypes from "prop-types";
 const api_url = import.meta.env.VITE_API_URL;
 
-const GetTableData = async (setDataSource) => {
-    try {
-        const response = await fetch(`${api_url}/user/getAllOrders`,{
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            credentials:"include"
-        })
-        const result = await response.json()
-        if(result.status === 200){
-            console.log(result.data)
-            setDataSource(result.data)
-        }else{
-            throw new Error("无数据")
-        }
-    }catch (e) {
-        console.error(e)
-    }
-}
 export default function OrderHistoryPage() {
-    const [dataSource,setDataSource] = useState([])
+    const [changeSeatForm] = Form.useForm();
+
+    const [dataSource,setDataSource] = useState([]);
+    const [searchSeatId, setSearchSeatId] = useState(null);
+    const [searchOrderDate, setSearchOrderDate] = useState(null);
+
+    const [currentRecord, setCurrentRecord] = useState({});
+    const [activeSeat,setActiveSeat] = useState(null);
+    const [isCancelModalOpen,setIsCancelModalOpen] = useState(false);
+    const [isChangeModalOpen,setIsChangeModalOpen] = useState(false);
     const columns = [
         {
             title: '座位编号',
@@ -67,7 +67,7 @@ export default function OrderHistoryPage() {
                         padding: '2px 8px'
                     }}
                 >
-                    {status}
+                    {status === '过期' ? '已使用' : status}
                 </Tag>
             )
         },
@@ -78,127 +78,210 @@ export default function OrderHistoryPage() {
             width: 200 ,
             render: (_, record) => (
                 <>
-                    {
-                        Array.isArray(record.operation) &&
-                        record.operation.map((operation, index) => {
-                            if(operation === '详情') return <DetailDialog key={index} record={record} operation={operation}/>
-                            if(operation === '取消预约') return <CancelOrderDialog
-                                key={index}
-                                record={record}
-                                operation={operation}
-                                onSuccess={() => {
-                                    GetTableData(setDataSource)
-                                }}
-                            />
-                         })
-                    }
+                    <Space size={'small'}>
+                        {record.status === '正常' &&  (
+                            <>
+                                <Button type={'text'}
+                                        onClick={() => {
+                                            setCurrentRecord(record)
+                                            setIsCancelModalOpen(true)
+                                        }}
+                                >
+                                    取消预约
+                                </Button>
+                                <Button type={'text'}
+                                        onClick={async () => {
+                                            setCurrentRecord(record);
+                                            setIsChangeModalOpen(true);
+                                            await getActiveSeats()
+                                        }}
+                                >
+                                    换座
+                                </Button>
+                            </>
+                        )}
+                    </Space>
                 </>
             ),
         }
 
     ];
-    useEffect(() => {
-        GetTableData(setDataSource)
-    }, []);
-    return (
-        <Table dataSource={dataSource}
-               columns={columns}
-               rowKey={'id'}
-               style={{
-                   width:'90%',
-                   margin:'40px auto'
-               }}
-        />
-    )
-}
-
-const DetailDialog = ({record,operation}) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-    return (
-        <>
-            <Button type="primary" onClick={showModal}>
-                {operation}
-            </Button>
-            <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                <p>{'座位编号 : ' + record.seat_id}</p>
-                <p>{'座位预约时间 :' + record.order_date}</p>
-                <p>{'预约状态' + record.status}</p>
-            </Modal>
-        </>
-    )
-}
-DetailDialog.propTypes = {
-    record: PropTypes.shape({
-        seat_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-        order_date: PropTypes.string,
-        create_time: PropTypes.string,
-        status: PropTypes.string,
-        // 根据实际数据结构补充其他字段
-    }).isRequired,
-    operation: PropTypes.string.isRequired
-};
-
-const CancelOrderDialog = ({record,operation,onSuccess}) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const showModal = () => {
-        setIsModalOpen(true);
-
-    };
-    const handleOk = async () => {
-        setIsModalOpen(false);
+    const GetTableData = async (setDataSource) => {
         try {
-            let result = await fetch(`${api_url}/user/cancelOrder`,{
+            const response = await fetch(`${api_url}/user/getAllOrders`,{
                 method:"POST",
                 headers:{
-                    "Content-Type":"application/json"
+                    "Content-Type":"application/json",
+                    "Authorization":"Bearer "+localStorage.getItem("token")
                 },
-                body:JSON.stringify({
-                    order_id:record.id
-                }),
                 credentials:"include"
             })
-            if(result.status === 200){
-                console.log("取消预约成功")
-                onSuccess()
-            }else{
-                throw new Error("取消预约失败")
+            if (response.status === 200) {
+                const result = await response.json();
+                setDataSource(result.data)
             }
-        }catch (e){
+        }catch (e) {
             console.error(e)
         }
+    }
+
+    const handleCancelOrder = async () => {
+        console.log(currentRecord)
+        const response = await fetch(`${api_url}/user/cancelOrder`,{
+            headers:{
+                "Content-Type":"application/json",
+                "Authorization":"Bearer "+localStorage.getItem("token")
+            },
+            credentials:"include",
+            method:"POST",
+            body:JSON.stringify({
+                order_id:currentRecord?._id
+            })
+        });
+
+        const result = await response.json();
+        if (response.status === 200) {
+            message.success(result.message);
+        } else {
+            message.error(result.message);
+        }
+        setIsCancelModalOpen(false)
+        await GetTableData(setDataSource)
+    }
+    /**
+     * 获取某日期所有可预约的座位
+     * @returns {Promise<void>}
+     */
+    const getActiveSeats = async () => {
+        const response = await fetch(`${api_url}/user/getActiveSeat`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                order_date: currentRecord?.order_date
+            })
+        });
+        const result = await response.json();
+        if (response.status === 200) {
+            setActiveSeat(result.data);
+        }
+    }
+    /**
+     * 向后端请求换座
+     * @param values
+     * @returns {Promise<void>}
+     */
+    const handleChangeSeat = async (values) => {
+        const {selectSeat} = values;
+        const response = await fetch(`${api_url}/user/changeSeat`,{
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                order_id: currentRecord?._id,
+                target_seat_id: selectSeat
+            })
+        })
+
+        if (response.status === 200) {
+            message.success("换座成功");
+            setIsChangeModalOpen(false);
+        } else {
+            message.error("换座失败");
+        }
+    }
+    /**
+     * 获取搜索座位的最新值
+     * @param e
+     */
+    const handleSeatSearchChange = (e) => {
+        setSearchSeatId(e.target.value);
     };
-    const handleCancel = () => {
-        setIsModalOpen(false);
+    /**
+     * 获取搜索日期的最新值
+     * @param date
+     * @param dateString
+     */
+    const handleDateSearchChange = (date, dateString) => {
+        setSearchOrderDate(dateString);
     };
+
+    const filterData = dataSource?.filter((item) => {
+        const isSeatIdMatch = !searchSeatId || (item.seat_id.toString() === searchSeatId);
+        const isDateMatch = !searchOrderDate || (item.order_date === searchOrderDate);
+        return isSeatIdMatch && isDateMatch;
+    })
+
+    useEffect(() => {
+        GetTableData(setDataSource).then(() => console.log(dataSource))
+    }, []);
+
     return (
-        <>
-            <Button type="primary" onClick={showModal}>
-                {operation}
-            </Button>
-            <Modal title="取消预约" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                <p>{"是否确认取消本次预约 ? "}</p>
+        <div style={{padding: '24px'}}>
+            <Card title='座位预约记录'>
+                <Space size={'small'} style={{ marginBottom: '10px'}}>
+                    <Input id={'SearchSeatId'}
+                           placeholder="座位搜索"
+                           value={searchSeatId}
+                           onChange={handleSeatSearchChange}
+                           style={{ width: 200 }}
+                           allowClear
+                    />
+
+                    <DatePicker onChange={handleDateSearchChange}
+                                format="YYYY-MM-DD"
+                    />
+
+                </Space>
+                <Table dataSource={filterData}
+                       columns={columns}
+                       rowKey={'_id'}
+                />
+            </Card>
+
+            <Modal title='确定要取消这次预约吗？'
+                   open={isCancelModalOpen}
+                   onCancel={() => setIsCancelModalOpen(false)}
+                   onOk={handleCancelOrder}
+            >
+
             </Modal>
-        </>
+
+            <Modal title='请选择要到哪个座位？'
+                   open={isChangeModalOpen}
+                   footer={null}
+                   onCancel={() => setIsChangeModalOpen(false)}
+                   // onOk={handleChangeSeat}
+            >
+                <Form form={changeSeatForm}
+                      onFinish={handleChangeSeat}
+                >
+                    <Form.Item name='selectSeat'>
+                        <Select options={activeSeat?.map((item) => {
+                            return {
+                                value: item.seat_id,
+                                label: item.seat_id
+                            }
+                        })}
+                                style={{ width: '100px'}}
+                                placeholder={'请选择座位'}
+                                defaultValue={currentRecord?.seat_id}
+                        />
+                    </Form.Item>
+                    <div style={{ textAlign: 'right'}}>
+                        <Space size={'small'}>
+                            <Button type={'primary'} htmlType={'submit'}>
+                                确定
+                            </Button>
+                        </Space>
+                    </div>
+                </Form>
+            </Modal>
+
+        </div>
     )
 }
-CancelOrderDialog.propTypes = {
-    record: PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        seat_id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-        order_date: PropTypes.string,
-        create_time: PropTypes.string,
-        status: PropTypes.string,
-        // 根据实际数据结构补充其他字段
-    }).isRequired,
-    operation: PropTypes.string.isRequired,
-    onSuccess: PropTypes.func.isRequired
-};
