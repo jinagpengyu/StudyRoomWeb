@@ -34,7 +34,10 @@ export default function AdminSeatsManage () {
         try {
             const response = await fetch(`${api_url}/api/seat/Status`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 credentials: 'include',
                 body: JSON.stringify({ date }),
             })
@@ -74,7 +77,10 @@ export default function AdminSeatsManage () {
         try {
             const response = await fetch(`${api_url}/admin/getOrderUserInfo`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 credentials: 'include',
                 body: JSON.stringify({
                     seat_id, order_date,

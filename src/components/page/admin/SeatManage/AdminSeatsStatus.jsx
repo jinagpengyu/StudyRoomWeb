@@ -117,6 +117,10 @@ export default function AdminSeatsStatus() {
             const response = await fetch(`${api_url}/admin/getAllSeats`, {
                 credentials: 'include',
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
             })
             const result = await response.json()
             if (result.status === 200) {
