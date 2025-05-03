@@ -5,13 +5,15 @@ import {
     UserOutlined,
 } from '@ant-design/icons'
 import { Button, Form, Input, Card, Typography, Grid , message} from 'antd'
+import { useNavigate } from 'react-router'
 
 const { Title } = Typography
 const { useBreakpoint } = Grid
 const api_url = import.meta.env.VITE_API_URL
 const RegisterPage = () => {
+    const navigate = useNavigate();
     const screens = useBreakpoint()
-// 在组件内添加注册处理函数
+    // 在组件内添加注册处理函数
     const handleRegister = async (values) => {
         try {
             // 确认密码一致性
@@ -38,6 +40,7 @@ const RegisterPage = () => {
             if (response.ok && data.status === 200) {
                 message.success('注册成功');
                 // 跳转到登录页或其他操作
+                navigate('/');
             } else {
                 message.error(data.message || '注册失败');
             }
