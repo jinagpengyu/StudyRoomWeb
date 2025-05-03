@@ -25,7 +25,10 @@ export default function OrderSeatPage () {
         try {
             const response = await fetch(`${api_url}/api/seat/Status`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json' ,
+                    'Authorization': `Bearer ` + localStorage.getItem('token')
+                },
                 credentials: 'include',
                 body: JSON.stringify({ date }),
             })
@@ -40,7 +43,10 @@ export default function OrderSeatPage () {
         try {
             const response = await fetch(`${api_url}/api/seat/OrderOne`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json' ,
+                    'Authorization': `Bearer ` + localStorage.getItem('token')
+                },
                 credentials: 'include',
                 body: JSON.stringify({
                     seat_id: seat.seat_id, order_date: selectDate,

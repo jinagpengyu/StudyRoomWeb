@@ -12,7 +12,7 @@ import {
     Typography,
 } from 'antd'
 
-const api_url = import.meta.env.VITE_API_URL
+const api_url = import.meta.env.VITE_API_URL;
 
 export default function UserInfoPage () {
     const [userInfo, setUserInfo] = useState({
@@ -28,21 +28,26 @@ export default function UserInfoPage () {
         try {
             const response = await fetch(`${api_url}/api/userInfo`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
                 credentials: 'include',
             })
+            const result = await response.json()
 
-            if (!response.ok) throw new Error('请求失败')
-            const data = await response.json()
-
-            if (data.status === 200) {
-                setUserInfo({
-                    name: data.data.name,
-                    email: data.data.email,
-                    phone: data.data.phone,
-                    role: data.data.role,
-                })
+            if ( response.status === 200) {
+                setUserInfo(result.data)
             }
+
+            // if (data.status === 200) {
+            //     setUserInfo({
+            //         name: data.data.name,
+            //         email: data.data.email,
+            //         phone: data.data.phone,
+            //         role: data.data.role,
+            //     })
+            // }
         } catch (error) {
             console.error('获取用户信息失败:', error)
         } finally {
@@ -59,7 +64,10 @@ export default function UserInfoPage () {
 
             const response = await fetch(endpoint, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json' ,
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
                 credentials: 'include',
                 body: JSON.stringify(values),
             })
