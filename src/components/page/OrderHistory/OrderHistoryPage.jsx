@@ -116,9 +116,11 @@ export default function OrderHistoryPage() {
                 },
                 credentials:"include"
             })
+            const result = await response.json();
             if (response.status === 200) {
-                const result = await response.json();
                 setDataSource(result.data)
+            } else {
+                message.error(result.message)
             }
         }catch (e) {
             console.error(e)
@@ -190,8 +192,7 @@ export default function OrderHistoryPage() {
         if (response.status === 200) {
             message.success("换座成功");
             setIsChangeModalOpen(false);
-        } else {
-            message.error("换座失败");
+            await GetTableData(setDataSource);
         }
     }
     /**
@@ -217,7 +218,7 @@ export default function OrderHistoryPage() {
     })
 
     useEffect(() => {
-        GetTableData(setDataSource).then(() => console.log(dataSource))
+        GetTableData(setDataSource)
     }, []);
 
     return (

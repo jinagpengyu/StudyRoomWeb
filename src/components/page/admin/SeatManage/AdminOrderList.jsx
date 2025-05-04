@@ -248,6 +248,7 @@ export default function AdminOrderList() {
             <Flex vertical gap="middle">
                 <Flex gap="middle" wrap>
                     <DatePicker
+                        placeholder="日期搜索"
                         onChange={handleDatePickerChange}
                         // value={selectedDate}
                         format="YYYY-MM-DD"
@@ -270,8 +271,8 @@ export default function AdminOrderList() {
                     rowKey="_id"
                     pagination={{
                         pageSize: 8,
-                        showSizeChanger: false,
-                        hideOnSinglePage: true
+                        // showSizeChanger: false,
+                        // hideOnSinglePage: true
                     }}
                     bordered
                     locale={{

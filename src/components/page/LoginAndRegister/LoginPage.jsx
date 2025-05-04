@@ -1,6 +1,6 @@
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Row, Col } from 'antd';
+import { Button, Checkbox, Form, Input, Row, Col, message } from 'antd'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router'
 
@@ -15,17 +15,18 @@ export default function LoginPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
                 body: JSON.stringify(values),
-                credentials: 'include'
             })
+            const result = await response.json()
+
             if(response.status === 200){
-                const result = await response.json()
                 console.log(result)
                 localStorage.setItem('token', result?.token)
                 localStorage.setItem('role',result?.user.role)
                 navigate('/user/index')
+            } else {
+                message.error('登录失败' + result?.message)
             }
         }catch (e) {
             console.error('登录失败:', e)

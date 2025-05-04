@@ -13,8 +13,8 @@ import ErrorPage from './components/page/admin/SystemManage/ErrorPage.jsx'
 
 
 createRoot(document.getElementById('root')).render(
-    <StrictMode>
-
+    // <StrictMode>
+    //
             <Theme >
                 <BrowserRouter>
                     <Routes>
@@ -25,7 +25,7 @@ createRoot(document.getElementById('root')).render(
                     </Routes>
                 </BrowserRouter>
             </Theme>
-
-    </StrictMode>
+    //
+    // </StrictMode>
 )
 

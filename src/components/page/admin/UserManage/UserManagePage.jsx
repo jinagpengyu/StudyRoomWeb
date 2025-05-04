@@ -30,30 +30,36 @@ export default function UserManagePage () {
             ),
         },
         {
-            title: '操作', key: 'action', render: (_, record) => (
-                <Space>
-                    <Button
-                        type="link"
-                        danger={record.status === '黑名单'}
-                        onClick={() => {
-                            setCurrentUser(record);
-                            setIsBlacklistModalOpen(true);
-                        }}
-                    >
-                        {record.status === '黑名单' ? '移出黑名单' : '加入黑名单'}
-                    </Button>
-                    <Button
-                        type="link"
-                        danger
-                        onClick={() => {
-                            // setCurrentDeleteUserId(record?._id)
-                            setCurrentUser(record)
-                            setIsDeleteModalOpen(true)
-                        }}
-                    >
-                        删除
-                    </Button>
-                </Space>
+            title: '操作',
+            key: 'action',
+            render: (_, record) => (
+                <>
+                    { record?.role !== 'admin' ? (
+                        <Space>
+                            <Button
+                                type="link"
+                                danger={record.status === '黑名单'}
+                                onClick={() => {
+                                    setCurrentUser(record);
+                                    setIsBlacklistModalOpen(true);
+                                }}
+                            >
+                                {record.status === '黑名单' ? '移出黑名单' : '加入黑名单'}
+                            </Button>
+                            <Button
+                                type="link"
+                                danger
+                                onClick={() => {
+                                    // setCurrentDeleteUserId(record?._id)
+                                    setCurrentUser(record)
+                                    setIsDeleteModalOpen(true)
+                                }}
+                            >
+                                删除
+                            </Button>
+                        </Space>
+                    ) : null }
+                </>
             ),
         }
         ]
@@ -69,6 +75,7 @@ export default function UserManagePage () {
                 credentials: 'include',
             })
             const result = await response.json()
+            // console.log('获取数据成功', result)
             setData(result.data)
         }catch (e) {
             console.error(e)
@@ -85,7 +92,7 @@ export default function UserManagePage () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token)')
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
                 body: JSON.stringify({ user_id:_id }),
             })
@@ -108,7 +115,7 @@ export default function UserManagePage () {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem('token)')
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
                 body: JSON.stringify({ user_id:_id, target_status }),
             })

@@ -37,17 +37,9 @@ export default function UserInfoPage () {
             const result = await response.json()
 
             if ( response.status === 200) {
+                // console.log(result.data)
                 setUserInfo(result.data)
             }
-
-            // if (data.status === 200) {
-            //     setUserInfo({
-            //         name: data.data.name,
-            //         email: data.data.email,
-            //         phone: data.data.phone,
-            //         role: data.data.role,
-            //     })
-            // }
         } catch (error) {
             console.error('获取用户信息失败:', error)
         } finally {
@@ -130,6 +122,9 @@ export default function UserInfoPage () {
 
                     <Descriptions.Item label="用户角色">
                         <Tag color="blue">{userInfo.role}</Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="用户状态">
+                        <Tag color={userInfo.status === '黑名单' ? 'red': 'blue'}>{userInfo.status}</Tag>
                     </Descriptions.Item>
                 </Descriptions>
             </Spin>

@@ -18,6 +18,7 @@ export default function ReportHistoryPage() {
         if (response.status === 200) {
             const result = await response.json();
             setReports(result.data)
+            console.log(result.data)
         } else if (response.status === 403) {
             message.error("请退出系统然后重新登录");
         } else if (response.status === 401) {
@@ -66,6 +67,7 @@ export default function ReportHistoryPage() {
                 <Table
                     columns={table_columns}
                     dataSource={reports}
+                    key={'_id'}
                 />
 
                 <Modal
