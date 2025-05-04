@@ -16,11 +16,13 @@ import PropTypes from 'prop-types'
 const { Title } = Typography
 const api_url = import.meta.env.VITE_API_URL
 
-const options = await GetSelectDate()
 
+// const options = await GetSelectDate();
 export default function AdminSeatsManage () {
+    const [options, setOptions] = useState([]);
+    const [selectDate, setSelectDate] = useState(options.length > 0 ? options[0] : null)
     const [seats, setSeats] = useState([])
-    const [selectDate, setSelectDate] = useState(options[0])
+
     const [messageApi, contextHolder] = message.useMessage()
     const [modalOpen, setModalOpen] = useState(false)
     const [orderUserinfo, setOrderUserinfo] = useState({})
@@ -49,6 +51,19 @@ export default function AdminSeatsManage () {
     }
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const TwoDate = await GetSelectDate();
+                setOptions(TwoDate);
+            } catch (e) {
+                console.error(e)
+            }
+        }
+        fetchData()
+    }, [])
+
+    useEffect(() => {
+
         getSeatStatus(selectDate).then(() => console.log('获取数据'))
     }, [selectDate])
 
@@ -117,32 +132,39 @@ export default function AdminSeatsManage () {
                     style={{ width: '50%', margin: 16 }}
                 />
 
-                <Row gutter={[16, 16]} style={{ padding: 16 }}>
-                    {seats.map((item) => {
-                        return (
-                            <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
-                                 xl={4}>
-                                <Card
-                                    bodyStyle={{ padding: 12 }}
-                                    hoverable
-                                >
-                                    <Flex align="center" gap={8}>
-                                        <StatusIcon status={item.status}/>
-                                        <Title level={5}
-                                               style={{ margin: 0 }}>{item.seat_id}</Title>
+                { selectDate && (
+                    <Row gutter={[16, 16]} style={{ padding: 16 }}>
+                        {seats.map((item) => {
+                            return (
+                                <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
+                                     xl={4}>
+                                    <Card
+                                        bodyStyle={{ padding: 12 }}
+                                        hoverable
+                                    >
+                                        <Flex align="center" gap={8}>
+                                            <StatusIcon status={item?.order_status}/>
+                                            <Title level={5}
+                                                   style={{ margin: 0 }}>{item.seat_id}</Title>
 
-                                        {item.status === '可预约'
-                                            ? (<Button>可预约</Button>)
-                                            : item.status === '暂停预约'
-                                                ? (<Button type="primary"
-                                                           onClick={notify.suspend}>暂停预约</Button>)
-                                                : (<Button danger
-                                                           onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
-                                    </Flex>
-                                </Card>
-                            </Col>)
-                    })}
-                </Row>
+                                            {item?.order_status === '可预约'
+                                                ? (<Button>可预约</Button>)
+                                                : item?.order_status === '暂停预约'
+                                                    ? (<Button type="primary"
+                                                               onClick={notify.suspend}>暂停预约</Button>)
+                                                    : (<Button danger
+                                                               onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
+                                        </Flex>
+                                    </Card>
+                                </Col>)
+                        })}
+                    </Row>
+                )}
+                { !selectDate && (
+                    <Flex justify="center" align="center" style={{ height: '10%' }}>
+                        <Title level={5}>请先选择日期</Title>
+                    </Flex>
+                )}
             </Flex>
             <Modal
                 title="预约详情"

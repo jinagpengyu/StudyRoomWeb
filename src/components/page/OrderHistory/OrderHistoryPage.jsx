@@ -79,7 +79,7 @@ export default function OrderHistoryPage() {
             render: (_, record) => (
                 <>
                     <Space size={'small'}>
-                        {record.status === '正常' &&  (
+                        {(record?.status === '使用中' || record?.status === '未使用') &&  (
                             <>
                                 <Button type={'text'}
                                         onClick={() => {

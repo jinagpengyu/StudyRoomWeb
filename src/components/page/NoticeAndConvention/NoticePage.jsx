@@ -12,6 +12,7 @@ export default function NoticePage(){
             credentials:"include",
             headers:{
                 "Content-Type":"application/json",
+                'Authorization': `Bearer ` + localStorage.getItem('token')
             },
         })
         if (response.status === 200) {

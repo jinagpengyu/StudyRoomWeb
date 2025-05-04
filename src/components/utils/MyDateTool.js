@@ -4,7 +4,8 @@ export async function GetSelectDate(){
         const response = await fetch(`${api_url}/tool/getSelectDate`,{
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
         })
         const result = await response.json();

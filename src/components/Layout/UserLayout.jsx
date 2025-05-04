@@ -47,7 +47,7 @@ const Pages = {
 }
 
 const UserLayout = () => {
-    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') === 'admin' ? 'AdminOrderSeatPage' : 'OrderSeatPage');
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') === 'admin' ? 'AdminOrderList' : 'OrderSeatPage');
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
@@ -78,7 +78,7 @@ const UserLayout = () => {
     }
     const defaultKeys = (() => {
         const role = localStorage.getItem('role');
-        return role === 'admin' ? [ 'admin-nav-1'] : ['user-nav-1'];
+        return role === 'admin' ? [ 'admin-nav-2'] : ['user-nav-1'];
     })();
     return (
         <Layout style={{height: "100vh"}}>

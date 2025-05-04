@@ -121,7 +121,7 @@ export default function AdminOrderList() {
             const result = await response.json()
             if(result.status === 200){
                 setData(result.data)
-                // console.log(result.data)
+                console.log(result.data)
             }else{
                 new Error('无数据')
             }
@@ -267,7 +267,7 @@ export default function AdminOrderList() {
                 <Table
                     dataSource={filteredData}
                     columns={columns}
-                    rowKey="seat_id"
+                    rowKey="_id"
                     pagination={{
                         pageSize: 8,
                         showSizeChanger: false,

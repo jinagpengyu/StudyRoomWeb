@@ -11,7 +11,11 @@ export default function Convention(){
         try {
             const response = await fetch(`${api_url}/user/getAllConvention`,{
                 method:"POST",
-                credentials:"include"
+                credentials:"include",
+                headers:{
+                    "Content-Type":"application/json",
+                    'Authorization': `Bearer ` + localStorage.getItem('token')
+                },
             })
             const result = await response.json()
             if(result.status === 200) setConventions(result.data)
