@@ -50,7 +50,7 @@ export default function AdminSystemPage() {
             });
 
             if (response.status === 200) {
-                message.success('系统已设置为不可用');
+                message.success(`系统已设置为${ system_status ? ' 可用 ' : ' 不可用 '}`);
                 await getSystemStatus();
                 setIsModalOpen(false);
             } else {

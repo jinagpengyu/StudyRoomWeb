@@ -9,7 +9,6 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const onFinish = async (values) => {
         console.log('Received values of form: ', values);
-        // 这里处理登录逻辑
         try{
             const response = await fetch(`${api_url}/api/login`,{
                 method: 'POST',
@@ -20,11 +19,14 @@ export default function LoginPage() {
             })
             const result = await response.json()
 
-            if(response.status === 200){
+            if( response.status === 200 ){
                 console.log(result)
                 localStorage.setItem('token', result?.token)
                 localStorage.setItem('role',result?.user.role)
                 navigate('/user/index')
+            } else if ( response.status === 401 ) {
+                message.error('登录失败' + result?.message)
+                navigate('/not/use')
             } else {
                 message.error('登录失败' + result?.message)
             }
