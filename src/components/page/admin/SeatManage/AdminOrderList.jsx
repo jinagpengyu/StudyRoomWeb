@@ -44,9 +44,9 @@ export default function AdminOrderList() {
             align: 'center',
             onFilter: (value, record) => record.status.indexOf(value) === 0,
             filters: [
-                { text: '已预约', value: '已预约' },
-                { text: '过期', value: '过期' },
-                { text: '已取消', value: '取消' },
+                { text: '使用中', value: '使用中' },
+                { text: '已使用', value: '已使用' },
+                { text: '取消', value: '取消' },
             ]
         },
         {
