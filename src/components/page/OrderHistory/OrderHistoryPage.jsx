@@ -224,17 +224,18 @@ export default function OrderHistoryPage() {
     return (
         <div style={{padding: '24px'}}>
             <Card title='座位预约记录'>
-                <Space size={'small'} style={{ marginBottom: '10px'}}>
+                <Space size={'middle'} style={{ marginBottom: '10px'}}>
                     <Input id={'SearchSeatId'}
                            placeholder="座位搜索"
                            value={searchSeatId}
                            onChange={handleSeatSearchChange}
-                           style={{ width: 200 }}
+                           style={{ width: 100 }}
                            allowClear
                     />
 
                     <DatePicker onChange={handleDateSearchChange}
                                 format="YYYY-MM-DD"
+                                placeholder={'选择日期'}
                     />
 
                 </Space>
