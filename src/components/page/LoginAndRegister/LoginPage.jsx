@@ -20,15 +20,21 @@ export default function LoginPage() {
             const result = await response.json()
 
             if( response.status === 200 ){
+                // 登录成功
                 console.log(result)
                 localStorage.setItem('token', result?.token)
                 localStorage.setItem('role',result?.user.role)
                 navigate('/user/index')
             } else if ( response.status === 401 ) {
+                // 用户端不可用
                 message.error('登录失败' + result?.message)
                 navigate('/not/use')
-            } else if( response.status === 402) {
+            } else if( response.status === 402 ) {
+                // 密码错误
                 message.error('登录失败 ' + result?.message + ' 请检查邮箱和密码是否输入正确')
+            } else if ( response.status === 301 ) {
+                // 用户不存在
+                message.error('登录失败 ' + result?.message )
             }
         }catch (e) {
             console.error('登录失败:', e)

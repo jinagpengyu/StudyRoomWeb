@@ -1,41 +1,63 @@
-import { Button, Card, message } from 'antd'
+import { Button, Card, message, Modal, Space } from 'antd'
+import { useState } from 'react'
 
 const api_url = import.meta.env.VITE_API_URL;
 
 export default function UserSystemSettingPage() {
+    const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
-    const handleLoginOutSafely = async () => {
+    const handleDeleteAccount = async () => {
         try {
-            const response = await fetch(`${api_url}/users/login/out`, {
+            const response = await fetch(`${api_url}/user/deleteSelf`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 }
-            });
+            })
             const result = await response.json();
-
-            if (response.ok) {
-                localStorage.clear();
-                window.location.replace(result.redirect);
+            if ( response.status === 200 ) {
+                message.success(result.message);
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = '/';
             } else {
-                message.error('退出登录失败');
+                throw new Error(result.message)
             }
         } catch (e) {
-            console.error('退出异常:', e);
-            message.error('退出登录时发生异常');
-            // 异常时强制退出
-            localStorage.removeItem('token');
-            window.location.reload();
+            console.error(e)
         }
     }
+
     return (
         <div style={{ padding: '24px'}}>
             <Card>
-                <Button type={'primary'}
-                        onClick={handleLoginOutSafely}
-                >安全退出系统</Button>
+                <Space size={'middle'}>
+                    <Button type={'primary'}
+                            // onClick={handleLoginOutSafely}
+                    >安全退出系统</Button>
+                    <Button color="danger"
+                            variant="outlined"
+                            onClick={() => setIsDeleteAccount(true)}
+                    >
+                        注销账户
+                    </Button>
+                </Space>
             </Card>
+
+            <Modal title={'是否确定要注销账户？'}
+                   open={isDeleteAccount}
+                   okText={'确定注销'}
+                   cancelText={'取消'}
+                   onOk={async () => {
+                       setIsDeleteAccount(false);
+                       await handleDeleteAccount();
+
+                   }}
+                   onCancel={() => setIsDeleteAccount(false)}
+            >
+
+            </Modal>
         </div>
     )
 }
