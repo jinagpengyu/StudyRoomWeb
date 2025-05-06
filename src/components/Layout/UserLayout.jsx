@@ -25,6 +25,8 @@ import AdminSystemPage from '../page/admin/SystemManage/AdminSystemPage.jsx'
 import AdminConventionPage
     from '../page/admin/ConventionManage/AdminConventionPage.jsx'
 import AdminReportPage from '../page/admin/ReportManage/AdminReportPage.jsx'
+import UserSystemSettingPage
+    from '../page/SystemSetting/UserSystemSettingPage.jsx'
 
 const { Header, Sider } = Layout;
 
@@ -43,7 +45,8 @@ const Pages = {
     "AdminNoticePage": <AdminNoticePage/>,
     "AdminSystemPage": <AdminSystemPage/>,
     "AdminConventionPage": <AdminConventionPage/>,
-    "AdminReportPage": <AdminReportPage/>
+    "AdminReportPage": <AdminReportPage/>,
+    "UserSystemSettingPage": <UserSystemSettingPage/>
 }
 
 const UserLayout = () => {
@@ -185,8 +188,8 @@ const UserLayout = () => {
                                 key: 'user-nav-7',
                                 icon: <BellOutlined />,
                                 label: '系统设置',
-                                // onClick: () => setCurrentPage("UserInfoPage")
-                            }
+                                onClick: () => setCurrentPage("UserSystemSettingPage")
+                            },
                         ] : [];
 
                         return [
