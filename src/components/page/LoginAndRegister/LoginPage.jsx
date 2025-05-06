@@ -27,8 +27,8 @@ export default function LoginPage() {
             } else if ( response.status === 401 ) {
                 message.error('登录失败' + result?.message)
                 navigate('/not/use')
-            } else {
-                message.error('登录失败' + result?.message)
+            } else if( response.status === 402) {
+                message.error('登录失败 ' + result?.message + ' 请检查邮箱和密码是否输入正确')
             }
         }catch (e) {
             console.error('登录失败:', e)
