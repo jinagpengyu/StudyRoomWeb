@@ -64,6 +64,7 @@ export default function LoginPage() {
                         <Form.Item
                             name="password"
                             rules={[{ required: true, message: '请输入密码!' }]}
+                            style={{marginBottom : '50px'}}
                         >
                             <Input.Password
                                 prefix={<LockOutlined />}
@@ -71,14 +72,14 @@ export default function LoginPage() {
                             />
                         </Form.Item>
 
-                        <Form.Item>
-                            <Form.Item name="remember" valuePropName="checked" noStyle>
-                                <Checkbox>记住我</Checkbox>
-                            </Form.Item>
-                            <Link to="/forgot-password" style={{ float: 'right' }}>
-                                忘记密码
-                            </Link>
-                        </Form.Item>
+                        {/*<Form.Item>*/}
+                        {/*    <Form.Item name="remember" valuePropName="checked" noStyle>*/}
+                        {/*        <Checkbox>记住我</Checkbox>*/}
+                        {/*    </Form.Item>*/}
+                        {/*    <Link to="/forgot-password" style={{ float: 'right' }}>*/}
+                        {/*        忘记密码*/}
+                        {/*    </Link>*/}
+                        {/*</Form.Item>*/}
 
                         <Form.Item>
                             <Button
