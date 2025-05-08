@@ -1,25 +1,30 @@
-import { Button, Card, message, Modal, Space } from 'antd'
+import { Button, Card, Form, Input, message, Modal, Space } from 'antd'
 import { useState } from 'react'
 
 const api_url = import.meta.env.VITE_API_URL;
 
 export default function UserSystemSettingPage() {
+    const [checkForm] = Form.useForm();
     const [isDeleteAccount, setIsDeleteAccount] = useState(false);
 
-    const handleDeleteAccount = async () => {
+    const handleDeleteAccount = async ( values ) => {
+        const { password } = values;
         try {
             const response = await fetch(`${api_url}/user/deleteSelf`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem('token')
-                }
+                },
+                body: JSON.stringify({
+                    password
+                })
             })
             const result = await response.json();
             if ( response.status === 200 ) {
                 message.success(result.message);
                 localStorage.removeItem('token');
-                localStorage.removeItem('user');
+                localStorage.removeItem('role');
                 window.location.href = '/';
             } else {
                 throw new Error(result.message)
@@ -47,16 +52,37 @@ export default function UserSystemSettingPage() {
 
             <Modal title={'是否确定要注销账户？'}
                    open={isDeleteAccount}
-                   okText={'确定注销'}
-                   cancelText={'取消'}
-                   onOk={async () => {
-                       setIsDeleteAccount(false);
-                       await handleDeleteAccount();
-
-                   }}
+                   footer={null}
+                   // okText={'确定注销'}
+                   // cancelText={'取消'}
+                   // onOk={async () => {
+                   //     setIsDeleteAccount(false);
+                   //     await handleDeleteAccount();
+                   //
+                   // }}
                    onCancel={() => setIsDeleteAccount(false)}
             >
+                <Form form={checkForm}
+                      layout={'vertical'}//垂直布局
+                      onFinish={handleDeleteAccount}
+                >
+                    <Form.Item name='password' label={'请输入密码'}>
+                        <Input.Password placeholder={'请输入密码'} />
+                    </Form.Item>
 
+                    <div style={{ textAlign: 'right' }}>
+                        <Space size={'middle'}>
+                            <Button type={'primary'}
+                                    htmlType={'submit'}
+                            >确定</Button>
+
+                            <Button type={'default'}
+                                    htmlType={'reset'}
+                                    onClick={() => setIsDeleteAccount(false)}
+                            >取消</Button>
+                        </Space>
+                    </div>
+                </Form>
             </Modal>
         </div>
     )

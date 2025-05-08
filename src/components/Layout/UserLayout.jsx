@@ -8,7 +8,8 @@ import {
     UserOutlined,
     BellOutlined, FormOutlined, AppstoreAddOutlined, CreditCardOutlined,
 } from '@ant-design/icons'
-import { Button, Layout, Menu, message, theme } from 'antd'
+import { Button, Layout, Menu, message, Space, theme, Typography } from 'antd'
+const { Text } = Typography
 import OrderSeatPage from '../page/OrderSeatsView/OrderSeatPage.jsx'
 import OrderHistoryPage from '../page/OrderHistory/OrderHistoryPage.jsx'
 import Convention from '../page/NoticeAndConvention/Convention.jsx'
@@ -50,7 +51,7 @@ const Pages = {
 }
 
 const UserLayout = () => {
-    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') === 'admin' ? 'AdminOrderList' : 'OrderSeatPage');
+    const [currentPage, setCurrentPage] = useState(localStorage.getItem('role') === 'admin' ? 'AdminOrderSeatPage' : 'OrderSeatPage');
     const [collapsed, setCollapsed] = useState(false);
     const {
         token: { colorBgContainer },
@@ -213,10 +214,11 @@ const UserLayout = () => {
                     justifyContent: 'space-between', // 添加两端对齐
                     alignItems: 'center'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Space size={'middle'}>
                         <Button
                             type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                            icon={collapsed ? <MenuUnfoldOutlined/> :
+                                <MenuFoldOutlined/>}
                             onClick={() => setCollapsed(!collapsed)}
                             style={{
                                 fontSize: '16px',
@@ -224,8 +226,16 @@ const UserLayout = () => {
                                 height: 64,
                             }}
                         />
-                        <span style={{ marginLeft: 8 }}>自习室预约管理系统</span>
-                    </div>
+                        <span style={{
+                            marginLeft: 8,
+                            fontSize: 26,
+                        }}>自习室预约管理系统</span>
+                        <span style={{
+                            marginLeft: 8,
+                            fontSize: 26,
+                            color: '#52c41a',
+                        }}>自习室地址：三峡大学SOGO广场2层203</span>
+                    </Space>
 
                     <Button
                         icon={<LogoutOutlined />}
