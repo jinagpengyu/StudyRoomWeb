@@ -1,13 +1,15 @@
-import { Button, Input, Modal, Space, Table, Tag } from 'antd'
+import { Button, Form, Input, message, Modal, Space, Table, Tag } from 'antd'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
 const api_url = import.meta.env.VITE_API_URL;
 export default function UserManagePage () {
+    const [changePasswordForm] = Form.useForm()
     const [data, setData] = useState(null)
     const [isBlacklistModalOpen, setIsBlacklistModalOpen] = useState(false)
     const [currentUser, setCurrentUser] = useState(null)
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+    const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
 
     const columns = [
         {
@@ -57,13 +59,51 @@ export default function UserManagePage () {
                             >
                                 删除
                             </Button>
+                            <Button type={'link'}
+                                    danger
+                                    onClick={() => {
+                                        setCurrentUser(record)
+                                        changePasswordForm.setFieldsValue({
+                                            update_password: '',
+                                            admin_password: ''
+                                        })
+                                        setIsChangePasswordModalOpen(true)
+                                    }}
+                            >
+                                修改密码
+                            </Button>
                         </Space>
                     ) : null }
                 </>
             ),
         }
         ]
+    const updateUserPassword = async (values) => {
+        try {
+            const { update_password, admin_password } = values;
+            const response = await fetch(`${api_url}/admin/updateUserPassword`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
+                body: JSON.stringify({
+                    user_id: currentUser?._id,
+                    update_password: update_password,
+                    admin_password: admin_password
+                }),
+            })
 
+            if ( response.status === 200 ) {
+                message.success('修改成功')
+                setIsChangePasswordModalOpen(false)
+            } else {
+                message.error('修改失败')
+            }
+        } catch (e) {
+            console.error(e)
+        }
+    }
     const getAllUserInfo = async () => {
         try {
             const response = await fetch(`${api_url}/admin/get_user_info`, {
@@ -222,6 +262,43 @@ export default function UserManagePage () {
                         <p><b>该操作不可撤销！</b></p>
                     </div>
                 )}
+            </Modal>
+
+        {/*    修改用户密码*/}
+            <Modal title={'修改用户密码'}
+                   open={isChangePasswordModalOpen}
+                   onCancel={() => setIsChangePasswordModalOpen(false)}
+                   footer={null}
+            >
+                <Form form={changePasswordForm}
+                      layout={'vertical'}
+                      onFinish={updateUserPassword}
+                >
+                    <Form.Item label={'用户新密码'}
+                               name='update_password'
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label={'管理员密码'}
+                               name='admin_password'
+                    >
+                        <Input.Password  />
+                    </Form.Item>
+                    <div style={{ textAlign: 'right'}}>
+                        <Space size={'small'}>
+                            <Button type={'primary'}
+                                    htmlType={'submit'}
+                            >
+                                确认
+                            </Button>
+                            <Button type={'default'}
+                                    onClick={() => setIsChangePasswordModalOpen(false)}
+                            >
+                                取消
+                            </Button>
+                        </Space>
+                    </div>
+                </Form>
             </Modal>
         </div>
     )

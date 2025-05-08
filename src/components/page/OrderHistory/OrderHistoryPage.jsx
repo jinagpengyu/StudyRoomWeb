@@ -46,10 +46,12 @@ export default function OrderHistoryPage() {
             dataIndex: 'status',
             key: 'status',
             sorter: (a, b) => {
-                // 正常状态优先级最高
-                if (a.status === '正常' && b.status !== '正常') return -1;
-                if (b.status === '正常' && a.status !== '正常') return 1;
 
+                // 正常状态优先级最高
+                if (a.status === '使用中' && b.status !== '使用中') return -1;
+                if (b.status === '使用中' && a.status !== '使用中') return 1;
+                if (a.status === '取消' && b.status !== '取消' ) return 1;
+                if (b.status === '取消' && a.status !== '取消') return -1;
                 // 其他状态按字母顺序排序
                 return a.status.localeCompare(b.status);
             },
@@ -242,6 +244,7 @@ export default function OrderHistoryPage() {
                 <Table dataSource={filterData}
                        columns={columns}
                        rowKey={'_id'}
+                       pagination={{ pageSize: 8 }}
                 />
             </Card>
 
