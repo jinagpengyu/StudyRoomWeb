@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Button, Form, Input, Select, message } from "antd";
+import { Button, Form, Input, Select, message, Card } from 'antd'
 const { TextArea } = Input;
 
 const api_url = import.meta.env.VITE_API_URL;
@@ -44,56 +44,60 @@ export default function NewReportPage() {
     };
 
     return (
-        <div style={{ maxWidth: 1000, margin: '40px auto' }}>
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleSubmit}
-                initialValues={{ type: 'noise' }}
-                style={{
-                    width: '1000px',
-                }}
-            >
-                <Form.Item
-                    label="投诉标题"
-                    name="title"
-                    rules={[{ required: true, message: '请输入投诉标题' }]}
-                >
-                    <Input placeholder="请输入简要标题（不超过50字）" maxLength={50} />
-                </Form.Item>
-
-                <Form.Item
-                    label="投诉类型"
-                    name="type"
-                    rules={[{ required: true, message: '请选择投诉类型' }]}
-                >
-                    <Select options={reportTypes} />
-                </Form.Item>
-
-                <Form.Item
-                    label="详细描述"
-                    name="content"
-                    rules={[{ required: true, message: '请输入投诉内容' }]}
-                >
-                    <TextArea
-                        rows={6}
-                        placeholder={"请具体描述投诉内容（建议包含时间、地点等详细信息\""}
-                        maxLength={500}
-                        showCount
-                    />
-                </Form.Item>
-
-                <Form.Item>
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={submitting}
-                        style={{ width: 120 }}
+        <div style={{ padding: '24px'}}>
+            <Card title={'投诉意见反馈'}>
+                <div style={{ display: 'flex',justifyContent:'center', alignItems: 'center'}}>
+                    <Form
+                        form={form}
+                        layout="vertical"
+                        onFinish={handleSubmit}
+                        initialValues={{ type: 'noise' }}
+                        style={{
+                            width: '1000px',
+                        }}
                     >
-                        {submitting ? '提交中...' : '提交投诉'}
-                    </Button>
-                </Form.Item>
-            </Form>
+                        <Form.Item
+                            label="投诉标题"
+                            name="title"
+                            rules={[{ required: true, message: '请输入投诉标题' }]}
+                        >
+                            <Input placeholder="请输入简要标题（不超过50字）" maxLength={50} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="投诉类型"
+                            name="type"
+                            rules={[{ required: true, message: '请选择投诉类型' }]}
+                        >
+                            <Select options={reportTypes} />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="详细描述"
+                            name="content"
+                            rules={[{ required: true, message: '请输入投诉内容' }]}
+                        >
+                            <TextArea
+                                rows={6}
+                                placeholder={"请具体描述投诉内容（建议包含时间、地点等详细信息\""}
+                                maxLength={500}
+                                showCount
+                            />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={submitting}
+                                style={{ width: 120 }}
+                            >
+                                {submitting ? '提交中...' : '提交投诉'}
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+            </Card>
         </div>
     );
 }
