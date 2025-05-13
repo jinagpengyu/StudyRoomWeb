@@ -1,12 +1,14 @@
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Row, Col, message } from 'antd'
+import { Button, Form, Input, Row, Col, message, Modal } from 'antd'
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router'
+import { useState } from 'react'
 
 const api_url = import.meta.env.VITE_API_URL;
 export default function LoginPage() {
     const navigate = useNavigate();
+    const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
     const onFinish = async (values) => {
         console.log('Received values of form: ', values);
         try{
@@ -41,61 +43,82 @@ export default function LoginPage() {
         }
     };
 
+    const handleCloseForgotPasswordModal = () => {
+        setIsForgotPasswordModalOpen(false);
+    };
     return (
-        <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
-            <Col xs={20} sm={16} md={12} lg={8}>
-                <div style={{ padding: 24, background: '#fff', borderRadius: 4 }}>
-                    <h2 style={{ textAlign: 'center', marginBottom: 24 }}>用户登录</h2>
-                    <Form
-                        name="login_form"
-                        initialValues={{ remember: true }}
-                        onFinish={onFinish}
-                    >
-                        <Form.Item
-                            name="email"
-                            rules={[{ required: true, message: '请输入邮箱!' }]}
+        <>
+            <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
+                <Col xs={20} sm={16} md={12} lg={8}>
+                    <div style={{ padding: 24, background: '#fff', borderRadius: 4 }}>
+                        <h2 style={{ textAlign: 'center', marginBottom: 24 }}>用户登录</h2>
+                        <Form
+                            name="login_form"
+                            initialValues={{ remember: true }}
+                            onFinish={onFinish}
                         >
-                            <Input
-                                prefix={<UserOutlined />}
-                                placeholder="邮箱"
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="password"
-                            rules={[{ required: true, message: '请输入密码!' }]}
-                            style={{marginBottom : '50px'}}
-                        >
-                            <Input.Password
-                                prefix={<LockOutlined />}
-                                placeholder="密码"
-                            />
-                        </Form.Item>
-
-                        {/*<Form.Item>*/}
-                        {/*    <Form.Item name="remember" valuePropName="checked" noStyle>*/}
-                        {/*        <Checkbox>记住我</Checkbox>*/}
-                        {/*    </Form.Item>*/}
-                        {/*    <Link to="/forgot-password" style={{ float: 'right' }}>*/}
-                        {/*        忘记密码*/}
-                        {/*    </Link>*/}
-                        {/*</Form.Item>*/}
-
-                        <Form.Item>
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                block
+                            <Form.Item
+                                name="email"
+                                rules={[{ required: true, message: '请输入邮箱!' }]}
                             >
-                                登录
-                            </Button>
-                            <div style={{ marginTop: 16, textAlign: 'center' }}>
-                                或 <Link to="/register">立即注册</Link>
-                            </div>
-                        </Form.Item>
-                    </Form>
-                </div>
-            </Col>
-        </Row>
+                                <Input
+                                    prefix={<UserOutlined />}
+                                    placeholder="邮箱"
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="password"
+                                rules={[{ required: true, message: '请输入密码!' }]}
+                                style={{marginBottom : '20px'}}
+                            >
+                                <Input.Password
+                                    prefix={<LockOutlined />}
+                                    placeholder="密码"
+                                />
+                            </Form.Item>
+
+                            <Form.Item>
+                                {/*<Form.Item name="remember" valuePropName="checked" noStyle>*/}
+                                {/*    <Checkbox>记住我</Checkbox>*/}
+                                {/*</Form.Item>*/}
+                                {/*<Link  style={{ float: 'right' }}>*/}
+                                {/*    忘记密码*/}
+                                {/*</Link>*/}
+                                <div style={{ textAlign: 'right'}}>
+                                    <Button type={'link'}
+                                            onClick={() => setIsForgotPasswordModalOpen(true)}
+                                    >
+                                        忘记密码
+                                    </Button>
+                                </div>
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    block
+                                >
+                                    登录
+                                </Button>
+                                <div style={{ marginTop: 16, textAlign: 'center' }}>
+                                    或 <Link to="/register">立即注册</Link>
+                                </div>
+                            </Form.Item>
+                        </Form>
+                    </div>
+                </Col>
+            </Row>
+            <Modal open={isForgotPasswordModalOpen}
+                   title={'提示！'}
+                   onOk={handleCloseForgotPasswordModal}
+                   onCancel={handleCloseForgotPasswordModal}
+                   okText={'好的'}
+                   cancelText={'返回'}
+            >
+                <span>请寻找管理员修改密码</span>
+            </Modal>
+        </>
     );
 }
