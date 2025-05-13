@@ -95,7 +95,7 @@ export default function UserInfoPage () {
         <Card
             title="个人信息"
             variant={'borderless'}
-            style={{ margin: 16 }}
+            style={{ margin: 24 }}
             extra={[
                 <Button key="name" onClick={() => showEditModal(
                     'name')}>修改用户名</Button>,

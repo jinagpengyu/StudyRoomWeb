@@ -1,5 +1,5 @@
 import {
-    Button,
+    Button, Card,
     DatePicker,
     Flex, Form,
     Input, message,
@@ -129,9 +129,11 @@ export default function AdminOrderList() {
             console.error(e)
         }
     }
+
     useEffect(() => {
         getAllUserOrderData().then(() => console.log('获取数据成功'))
     }, [])
+
     // 双维度数据过滤
     const filteredData = data?.filter(item => {
         // 日期匹配检查
@@ -244,133 +246,98 @@ export default function AdminOrderList() {
 
     return (
         <div style={{ width: '100%', padding: '24px' }}>
-            {/* 查询条件区域 */}
-            <Flex vertical gap="middle">
-                <Flex gap="middle" wrap>
-                    <DatePicker
-                        placeholder="日期搜索"
-                        onChange={handleDatePickerChange}
-                        // value={selectedDate}
-                        format="YYYY-MM-DD"
-                        style={{ width: 160 }}
-                    />
+            <Card title={'用户预约记录'}>
+                {/* 查询条件区域 */}
+                <Flex vertical gap="middle">
+                    <Flex gap="middle" wrap>
+                        <DatePicker
+                            placeholder="日期搜索"
+                            onChange={handleDatePickerChange}
+                            // value={selectedDate}
+                            format="YYYY-MM-DD"
+                            style={{ width: 160 }}
+                        />
 
-                    <Input
-                        placeholder="用户名搜索"
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        style={{ width: 200 }}
-                        allowClear
+                        <Input
+                            placeholder="用户名搜索"
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            style={{ width: 200 }}
+                            allowClear
+                        />
+                    </Flex>
+
+                    {/* 数据展示区域 */}
+                    <Table
+                        dataSource={filteredData}
+                        columns={columns}
+                        rowKey="_id"
+                        pagination={{
+                            pageSize: 7,
+                            // showSizeChanger: false,
+                            // hideOnSinglePage: true
+                        }}
+                        bordered
+                        locale={{
+                            emptyText: (
+                                <div style={{ textAlign: 'center', padding: '32px' }}>
+                                    {searchTerm || selectedDate
+                                        ? '未找到匹配的预约记录'
+                                        : '暂无预约记录'}
+                                </div>
+                            )
+                        }}
+                        style={{ flex: 1 }}
                     />
                 </Flex>
+                <Modal
+                    title="删除确认"
+                    open={modalVisible}
+                    onOk={confirmDelete}
+                    onCancel={cancelDelete}
+                    okText="确认删除"
+                    cancelText="取消"
+                    okButtonProps={{ danger: true }}
+                >
+                    <p>确定要删除用户 <strong>{currentRecord?.user_name}</strong> 的预约记录吗？</p>
+                    <p style={{ color: '#ff4d4f' }}>此操作不可撤销</p>
+                </Modal>
 
-                {/* 数据展示区域 */}
-                <Table
-                    dataSource={filteredData}
-                    columns={columns}
-                    rowKey="_id"
-                    pagination={{
-                        pageSize: 8,
-                        // showSizeChanger: false,
-                        // hideOnSinglePage: true
+                {/* 换座模态框 */}
+                <Modal
+                    title="换座操作"
+                    open={changeSeatModalVisible}
+                    onOk={() => {
+                        // console.log('提交换座:', selectedSeat)
+                        confirmChangeSeat().then(() => console.log('换座'))
                     }}
-                    bordered
-                    locale={{
-                        emptyText: (
-                            <div style={{ textAlign: 'center', padding: '32px' }}>
-                                {searchTerm || selectedDate
-                                    ? '未找到匹配的预约记录'
-                                    : '暂无预约记录'}
-                            </div>
-                        )
+                    onCancel={() => {
+                        setChangeSeatModalVisible(false)
+                        setSelectedSeat('')
                     }}
-                    style={{ flex: 1 }}
-                />
-            </Flex>
-            <Modal
-                title="删除确认"
-                open={modalVisible}
-                onOk={confirmDelete}
-                onCancel={cancelDelete}
-                okText="确认删除"
-                cancelText="取消"
-                okButtonProps={{ danger: true }}
-            >
-                <p>确定要删除用户 <strong>{currentRecord?.user_name}</strong> 的预约记录吗？</p>
-                <p style={{ color: '#ff4d4f' }}>此操作不可撤销</p>
-            </Modal>
+                    okText="确认换座"
+                    cancelText="取消"
+                >
+                    <p>为 <strong>{currentRecord?.user_name}</strong> 更换座位：</p>
 
-            {/*/!* 修改状态模态框 *!/*/}
-            {/*<Modal*/}
-            {/*    title="修改状态"*/}
-            {/*    open={updateModalVisible}*/}
-            {/*    onOk={() => {*/}
-            {/*        console.log('提交状态修改:', selectedStatus)*/}
-            {/*        setUpdateModalVisible(false)*/}
-            {/*    }}*/}
-            {/*    onCancel={() => {*/}
-            {/*        setUpdateModalVisible(false)*/}
-            {/*        setSelectedStatus('')*/}
-            {/*    }}*/}
-            {/*    okText="确认修改"*/}
-            {/*    cancelText="取消"*/}
-            {/*>*/}
-            {/*    <p>修改 <strong>{currentRecord?.user_name}</strong> 的预约状态：</p>*/}
+                    <Form layout="vertical" style={{ marginTop: 16 }}>
+                        <Form.Item label="目标座位" required>
+                            <Select
+                                value={selectedSeat}
+                                onChange={(value) => setSelectedSeat(value)}
+                                options={changeSeatOptions}
+                                fieldNames={{ value: 'seat_id', label: 'seat_id' }} // 自定义字段名
+                                placeholder="请选择座位号"
+                                style={{ width: '100%' }}
+                            />
+                        </Form.Item>
 
-            {/*    <Form layout="vertical" style={{ marginTop: 16 }}>*/}
-            {/*        <Form.Item label="目标状态" required>*/}
-            {/*            <Select*/}
-            {/*                value={selectedStatus}*/}
-            {/*                onChange={(value) => setSelectedStatus(value)}*/}
-            {/*                options={[*/}
-            {/*                    { value: '取消', label: '取消' },*/}
-            {/*                    { value: '过期', label: '过期' }*/}
-            {/*                ]}*/}
-            {/*                placeholder="请选择状态"*/}
-            {/*                style={{ width: '100%' }}*/}
-            {/*            />*/}
-            {/*        </Form.Item>*/}
-
-            {/*        <div style={{ color: '#4096ff', fontSize: 12, marginTop: 8 }}>*/}
-            {/*            当前状态：<span style={{ fontWeight: 500 }}>{currentRecord?.status}</span>*/}
-            {/*        </div>*/}
-            {/*    </Form>*/}
-            {/*</Modal>*/}
-
-            {/* 换座模态框 */}
-            <Modal
-                title="换座操作"
-                open={changeSeatModalVisible}
-                onOk={() => {
-                    // console.log('提交换座:', selectedSeat)
-                    confirmChangeSeat().then(() => console.log('换座'))
-                }}
-                onCancel={() => {
-                    setChangeSeatModalVisible(false)
-                    setSelectedSeat('')
-                }}
-                okText="确认换座"
-                cancelText="取消"
-            >
-                <p>为 <strong>{currentRecord?.user_name}</strong> 更换座位：</p>
-
-                <Form layout="vertical" style={{ marginTop: 16 }}>
-                    <Form.Item label="目标座位" required>
-                        <Select
-                            value={selectedSeat}
-                            onChange={(value) => setSelectedSeat(value)}
-                            options={changeSeatOptions}
-                            fieldNames={{ value: 'seat_id', label: 'seat_id' }} // 自定义字段名
-                            placeholder="请选择座位号"
-                            style={{ width: '100%' }}
-                        />
-                    </Form.Item>
-
-                    <div style={{ color: '#52c41a', fontSize: 12, marginTop: 8 }}>
-                        当前座位：<span style={{ fontWeight: 500 }}>{currentRecord?.seat_id}</span>
-                    </div>
-                </Form>
-            </Modal>
+                        <div style={{ color: '#52c41a', fontSize: 12, marginTop: 8 }}>
+                            当前座位：<span style={{ fontWeight: 500 }}>{currentRecord?.seat_id}</span>
+                        </div>
+                    </Form>
+                </Modal>
+            </Card>
         </div>
     )
 }

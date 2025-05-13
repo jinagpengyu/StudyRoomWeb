@@ -117,55 +117,54 @@ export default function AdminSeatsManage () {
     return (
         <>
             {contextHolder}
-            <Flex vertical gap={16}
-                  style={{
-                      height:'100vh',
-                      overflow:'hidden'
-                  }}
-            >
-                <Radio.Group
-                    options={options}
-                    value={selectDate}
-                    onChange={(e) => setSelectDate(e.target.value)}
-                    optionType="button"
-                    buttonStyle="solid"
-                    style={{ width: '50%', margin: 16 }}
-                />
+            <div style={{ padding: '24px', height: '100vh'}}>
+                <Card title={'预约情况总览'}>
+                    <Flex vertical gap={16}>
+                        <Radio.Group
+                            options={options}
+                            value={selectDate}
+                            onChange={(e) => setSelectDate(e.target.value)}
+                            optionType="button"
+                            buttonStyle="solid"
+                            style={{ width: '50%', margin: 8 }}
+                        />
 
-                { selectDate && (
-                    <Row gutter={[16, 16]} style={{ padding: 16 }}>
-                        {seats.map((item) => {
-                            return (
-                                <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
-                                     xl={4}>
-                                    <Card
-                                        bodyStyle={{ padding: 12 }}
-                                        hoverable
-                                    >
-                                        <Flex align="center" gap={8}>
-                                            <StatusIcon status={item?.order_status}/>
-                                            <Title level={5}
-                                                   style={{ margin: 0 }}>{item.seat_id}</Title>
+                        { selectDate && (
+                            <Row gutter={[16, 16]} style={{ padding: 16 }}>
+                                {seats.map((item) => {
+                                    return (
+                                        <Col key={item.seat_id} xs={24} sm={12} md={8} lg={6}
+                                             xl={4}>
+                                            <Card
+                                                bodyStyle={{ padding: 12 }}
+                                                hoverable
+                                            >
+                                                <Flex align="center" gap={8}>
+                                                    <StatusIcon status={item?.order_status}/>
+                                                    <Title level={5}
+                                                           style={{ margin: 0 }}>{item.seat_id}</Title>
 
-                                            {item?.order_status === '可预约'
-                                                ? (<Button>可预约</Button>)
-                                                : item?.order_status === '暂停预约'
-                                                    ? (<Button type="primary"
-                                                               onClick={notify.suspend}>暂停预约</Button>)
-                                                    : (<Button danger
-                                                               onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
-                                        </Flex>
-                                    </Card>
-                                </Col>)
-                        })}
-                    </Row>
-                )}
-                { !selectDate && (
-                    <Flex justify="center" align="center" style={{ height: '10%' }}>
-                        <Title level={5}>请先选择日期</Title>
+                                                    {item?.order_status === '可预约'
+                                                        ? (<Button>可预约</Button>)
+                                                        : item?.order_status === '暂停预约'
+                                                            ? (<Button type="primary"
+                                                                       onClick={notify.suspend}>暂停预约</Button>)
+                                                            : (<Button danger
+                                                                       onClick={() => GetOrderUserInfo(item.seat_id,selectDate)}>已预约</Button>)}
+                                                </Flex>
+                                            </Card>
+                                        </Col>)
+                                })}
+                            </Row>
+                        )}
+                        { !selectDate && (
+                            <Flex justify="center" align="center" style={{ height: '10%' }}>
+                                <Title level={5}>请先选择日期</Title>
+                            </Flex>
+                        )}
                     </Flex>
-                )}
-            </Flex>
+                </Card>
+            </div>
             <Modal
                 title="预约详情"
                 open={modalOpen}

@@ -234,6 +234,7 @@ const UserLayout = () => {
                             marginLeft: 8,
                             fontSize: 26,
                             color: '#52c41a',
+                            fontStyle: 'italic',
                         }}>自习室地址：三峡大学SOGO广场2层203</span>
                     </Space>
 

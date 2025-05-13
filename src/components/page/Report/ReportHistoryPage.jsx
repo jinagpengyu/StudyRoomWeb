@@ -76,8 +76,7 @@ export default function ReportHistoryPage() {
                     onOk={() => setIsDetailModalOpen(false)}
                     onCancel={() => setIsDetailModalOpen(false)}
                 >
-                    <Form layout={'vertical'}
-                    >
+                    <Form layout={'vertical'}>
                         <Form.Item label='标题: '>
                             {currentReport?.title}
                         </Form.Item>

@@ -1,4 +1,14 @@
-import { Button, Form, Input, message, Modal, Space, Table, Tag } from 'antd'
+import {
+    Button,
+    Card,
+    Form,
+    Input,
+    message,
+    Modal,
+    Space,
+    Table,
+    Tag,
+} from 'antd'
 import { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
@@ -195,111 +205,120 @@ export default function UserManagePage () {
     };
     return (
         <div style={{ padding: 24,width: '100%', margin: '0 auto' }}>
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginBottom: 16,
-            }}>
-                <Input.Search
-                    placeholder="搜索姓名/手机号"
-                    allowClear
-                    onSearch={(e) => searchOrder(e)}
-                    style={{ width: 300 }}
-                    enterButton={'搜索'}
+            <Card title={'管理用户'}>
+                <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    marginBottom: 16,
+                }}>
+                    <Input.Search
+                        placeholder="搜索姓名/手机号"
+                        allowClear
+                        onSearch={(e) => searchOrder(e)}
+                        style={{ width: 300 }}
+                        enterButton={'搜索'}
 
-                />
-            </div>
-
-            <Table
-                columns={columns}
-                dataSource={Array.isArray(data) && data}
-                rowKey="_id"
-                bordered
-                pagination={{
-                    pageSize: 5, showTotal: total => `共 ${total} 条`,
-                }}
-            />
-            {/*黑名单模态窗*/}
-            <Modal
-                title={`确认${currentUser?.status === '黑名单' ? '移出' : '移入'} 黑名单`}
-                open={isBlacklistModalOpen}
-                onOk={async () => {
-                    await handleToggleBlacklist(currentUser);
-                    setIsBlacklistModalOpen(false);
-                }}
-                onCancel={() => setIsBlacklistModalOpen(false)}
-                okText="确认"
-                cancelText="取消"
-            >
-                {currentUser && (
-                    <UserInfoPreview
-                        user={data.find(u => u._id === currentUser._id)}
-                        action={data.find(u => u._id === currentUser._id)?.isBlacklisted ? '移出' : '加入'}
                     />
-                )}
-            </Modal>
-            {/*删除用户模态窗*/}
-            <Modal
-                title="确认删除用户"
-                open={isDeleteModalOpen}
-                onOk={async () => {
-                    await handleDelete(currentUser)
-                    setIsDeleteModalOpen(false)
-                }}
-                onCancel={() => setIsDeleteModalOpen(false)}
-                okText="确认删除"
-                cancelText="取消"
-                okButtonProps={{ danger: true }}
-            >
-                {currentUser && data.find(u => u._id === currentUser._id) && (
-                    <div>
-                        <p style={{ color: 'red' }}>
-                            <b>确定要永久删除以下用户吗？</b>
-                        </p>
-                        <p><b>用户名：</b>{currentUser.name}</p>
-                        <p><b>手机号码：</b>{currentUser.phone}</p>
-                        <p><b>邮箱：</b>{currentUser.email}</p>
-                        <p><b>该操作不可撤销！</b></p>
-                    </div>
-                )}
-            </Modal>
+                </div>
 
-        {/*    修改用户密码*/}
-            <Modal title={'修改用户密码'}
-                   open={isChangePasswordModalOpen}
-                   onCancel={() => setIsChangePasswordModalOpen(false)}
-                   footer={null}
-            >
-                <Form form={changePasswordForm}
-                      layout={'vertical'}
-                      onFinish={updateUserPassword}
+                <Table
+                    columns={columns}
+                    dataSource={Array.isArray(data) && data}
+                    rowKey="_id"
+                    bordered
+                    pagination={{
+                        pageSize: 7, showTotal: total => `共 ${total} 条`,
+                    }}
+                />
+                {/*黑名单模态窗*/}
+                <Modal
+                    title={`确认${currentUser?.status === '黑名单'
+                        ? '移出'
+                        : '移入'} 黑名单`}
+                    open={isBlacklistModalOpen}
+                    onOk={async () => {
+                        await handleToggleBlacklist(currentUser);
+                        setIsBlacklistModalOpen(false);
+                    }}
+                    onCancel={() => setIsBlacklistModalOpen(false)}
+                    okText="确认"
+                    cancelText="取消"
                 >
-                    <Form.Item label={'用户新密码'}
-                               name='update_password'
+                    {currentUser && (
+                        <UserInfoPreview
+                            user={data.find(u => u._id === currentUser._id)}
+                            action={data.find(
+                                u => u._id === currentUser._id)?.isBlacklisted
+                                ? '移出'
+                                : '加入'}
+                        />
+                    )}
+                </Modal>
+                {/*删除用户模态窗*/}
+                <Modal
+                    title="确认删除用户"
+                    open={isDeleteModalOpen}
+                    onOk={async () => {
+                        await handleDelete(currentUser)
+                        setIsDeleteModalOpen(false)
+                    }}
+                    onCancel={() => setIsDeleteModalOpen(false)}
+                    okText="确认删除"
+                    cancelText="取消"
+                    okButtonProps={{ danger: true }}
+                >
+                    {currentUser && data.find(u => u._id === currentUser._id) &&
+                        (
+                            <div>
+                                <p style={{ color: 'red' }}>
+                                    <b>确定要永久删除以下用户吗？</b>
+                                </p>
+                                <p><b>用户名：</b>{currentUser.name}</p>
+                                <p><b>手机号码：</b>{currentUser.phone}</p>
+                                <p><b>邮箱：</b>{currentUser.email}</p>
+                                <p><b>该操作不可撤销！</b></p>
+                            </div>
+                        )}
+                </Modal>
+
+                {/*修改用户密码*/}
+                <Modal title={'修改用户密码'}
+                       open={isChangePasswordModalOpen}
+                       onCancel={() => setIsChangePasswordModalOpen(false)}
+                       footer={null}
+                >
+                    <Form form={changePasswordForm}
+                          layout={'vertical'}
+                          onFinish={updateUserPassword}
                     >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item label={'管理员密码'}
-                               name='admin_password'
-                    >
-                        <Input.Password  />
-                    </Form.Item>
-                    <div style={{ textAlign: 'right'}}>
-                        <Space size={'small'}>
-                            <Button type={'primary'}
-                                    htmlType={'submit'}
-                            >
-                                确认
-                            </Button>
-                            <Button type={'default'}
-                                    onClick={() => setIsChangePasswordModalOpen(false)}
-                            >
-                                取消
-                            </Button>
-                        </Space>
-                    </div>
-                </Form>
-            </Modal>
+                        <Form.Item label={'用户新密码'}
+                                   name='update_password'
+                        >
+                            <Input/>
+                        </Form.Item>
+                        <Form.Item label={'管理员密码'}
+                                   name='admin_password'
+                        >
+                            <Input.Password/>
+                        </Form.Item>
+                        <div style={{ textAlign: 'right' }}>
+                            <Space size={'small'}>
+                                <Button type={'primary'}
+                                        htmlType={'submit'}
+                                >
+                                    确认
+                                </Button>
+                                <Button type={'default'}
+                                        onClick={() => setIsChangePasswordModalOpen(
+                                            false)}
+                                >
+                                    取消
+                                </Button>
+                            </Space>
+                        </div>
+                    </Form>
+                </Modal>
+            </Card>
         </div>
     )
 
