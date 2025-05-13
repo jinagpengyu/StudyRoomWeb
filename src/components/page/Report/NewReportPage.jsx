@@ -10,10 +10,10 @@ export default function NewReportPage() {
 
     // 投诉类型选项
     const reportTypes = [
-        { label: '噪音干扰', value: 'noise' },
-        { label: '占座问题', value: 'occupation' },
-        { label: '设备故障', value: 'equipment' },
-        { label: '其他问题', value: 'others' },
+        { label: '噪音干扰', value: '噪音干扰' },
+        { label: '占座问题', value: '占座问题' },
+        { label: '设备故障', value: '设备故障' },
+        { label: '其他问题', value: '其他问题' },
     ];
 
     const handleSubmit = async (values) => {
